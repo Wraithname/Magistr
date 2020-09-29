@@ -9,14 +9,12 @@ namespace Magistr
 {
     public partial class Form1 : Form
     {
-        double[,] matrix;
         Moment matr;
         List<double> res;
         double angle;
         Bitmap image;
         public Form1()
         {
-            matrix = new double[3, 3];
             res = new List<double>();
             InitializeComponent();
         }
