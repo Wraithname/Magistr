@@ -12,6 +12,7 @@ namespace Magistr
         private Bitmap matrix1;
         private Bitmap matrix2;
         private Bitmap matrix3;
+        private int maxpoint = 0;
         public List<double> result;
         public List<double> cResult;
         public double[] center;
@@ -27,8 +28,34 @@ namespace Magistr
         }
         private void CMoment()
         {
-            double x = Math.Round(result[1] / result[0],1,mode:MidpointRounding.AwayFromZero);
-            double y = Math.Round(result[2] / result[0],1, mode: MidpointRounding.AwayFromZero);
+            double x = 0;
+            double y = 0;
+            for (int i = 0; i < matrix1.Height; i++)
+            {
+                for (int j = 0; j < matrix1.Width; j++)
+                {
+                    if (0.3 * matrix1.GetPixel(i, j).R + 0.59 * matrix1.GetPixel(i, j).G + 0.11 * matrix1.GetPixel(i, j).B != 255)
+                        maxpoint++;
+                }
+            }
+            for (int i = 0; i < matrix1.Height; i++)
+            {
+                for (int j = 0; j < matrix1.Width; j++)
+                {
+                    if (0.3 * matrix1.GetPixel(i, j).R + 0.59 * matrix1.GetPixel(i, j).G + 0.11 * matrix1.GetPixel(i, j).B != 255)
+                        x+=i;
+                }
+            }
+            x = x / maxpoint;
+            for (int i = 0; i < matrix1.Height; i++)
+            {
+                for (int j = 0; j < matrix1.Width; j++)
+                {
+                    if (0.3 * matrix1.GetPixel(i, j).R + 0.59 * matrix1.GetPixel(i, j).G + 0.11 * matrix1.GetPixel(i, j).B != 255)
+                        y+=j;
+                }
+            }
+            y = y / maxpoint;
             x = Math.Round(x, mode: MidpointRounding.AwayFromZero);
             y = Math.Round(y, mode: MidpointRounding.AwayFromZero);
             center[0] = x;
@@ -65,10 +92,10 @@ namespace Magistr
             cResult.Add(n2);
             GradusRes();
         }
-       
+
         private void GradusRes()
         {
-            gradus = Math.Round(0.5 * Math.Atan((2 * (cResult[0])) / (cResult[2] - cResult[1]))*(180.0/Math.PI),1,mode: MidpointRounding.AwayFromZero);
+            gradus = Math.Round(0.5 * Math.Atan((2 * (cResult[0])) / (cResult[1] - cResult[2])) * (180.0 / Math.PI), 1, mode: MidpointRounding.AwayFromZero);
         }
         public void GetRes()
         {
@@ -78,7 +105,7 @@ namespace Magistr
             res0.RunSynchronously();
             res1.RunSynchronously();
             res2.RunSynchronously();
-            res0.Wait(); 
+            res0.Wait();
             res1.Wait();
             res2.Wait();
             result.Add(res0.Result);
