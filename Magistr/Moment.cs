@@ -27,43 +27,42 @@ namespace Magistr
         }
         private void CMoment()
         {
-            double x = Math.Round(result[1] / result[0]);
-            double y = Math.Round(result[2] / result[0]);
+            double x = Math.Round(result[1] / result[0],1,mode:MidpointRounding.AwayFromZero);
+            double y = Math.Round(result[2] / result[0],1, mode: MidpointRounding.AwayFromZero);
+            x = Math.Round(x, mode: MidpointRounding.AwayFromZero);
+            y = Math.Round(y, mode: MidpointRounding.AwayFromZero);
             center[0] = x;
             center[1] = y;
             double n1 = 0;
-            n1 = result[3] - x * result[1];
-            //for (int i = 0; i < matrix1.Height; i++)
-            //{
-            //    for (int j = 0; j < matrix1.Width; j++)
-            //    {
-            //        if (matrix1.GetPixel(i, j).R != 255 && matrix1.GetPixel(i, j).G != 255 && matrix1.GetPixel(i, j).B != 255)
-            //            n1 += Math.Pow(i-x, 1) * Math.Pow(j-y, 1) * ((0.3 * matrix1.GetPixel(i, j).R + 0.59 * matrix1.GetPixel(i, j).G + 0.11 * matrix1.GetPixel(i, j).B));
-            //    }
-            //}
+            for (int i = 0; i < matrix1.Height; i++)
+            {
+                for (int j = 0; j < matrix1.Width; j++)
+                {
+                    if (0.3 * matrix1.GetPixel(i, j).R + 0.59 * matrix1.GetPixel(i, j).G + 0.11 * matrix1.GetPixel(i, j).B != 255)
+                        n1 += Math.Pow(i - x, 1) * Math.Pow(j - y, 1) * ((0.3 * matrix1.GetPixel(i, j).R + 0.59 * matrix1.GetPixel(i, j).G + 0.11 * matrix1.GetPixel(i, j).B));
+                }
+            }
             cResult.Add(n1);
-            double n2 = 0;
-            n2 = result[5] - x * result[2];
-            //for (int i = 0; i < matrix1.Height; i++)
-            //{
-            //    for (int j = 0; j < matrix1.Width; j++)
-            //    {
-            //        if (matrix1.GetPixel(i, j).R != 255 && matrix1.GetPixel(i, j).G != 255 && matrix1.GetPixel(i, j).B != 255)
-            //            n1 += Math.Pow(i - x, 0) * Math.Pow(j - y, 2) * ((0.3 * matrix1.GetPixel(i, j).R + 0.59 * matrix1.GetPixel(i, j).G + 0.11 * matrix1.GetPixel(i, j).B));
-            //    }
-            //}
-            cResult.Add(n2);
             double n3 = 0;
-            n3 = result[4] - x * result[1];
-            //for (int i = 0; i < matrix1.Height; i++)
-            //{
-            //    for (int j = 0; j < matrix1.Width; j++)
-            //    {
-            //        if (matrix1.GetPixel(i, j).R != 255 && matrix1.GetPixel(i, j).G != 255 && matrix1.GetPixel(i, j).B != 255)
-            //            n3 += Math.Pow(i - x, 2) * Math.Pow(j - y, 0) * ((0.3 * matrix1.GetPixel(i, j).R + 0.59 * matrix1.GetPixel(i, j).G + 0.11 * matrix1.GetPixel(i, j).B));
-            //    }
-            //}
+            for (int i = 0; i < matrix1.Height; i++)
+            {
+                for (int j = 0; j < matrix1.Width; j++)
+                {
+                    if (0.3 * matrix1.GetPixel(i, j).R + 0.59 * matrix1.GetPixel(i, j).G + 0.11 * matrix1.GetPixel(i, j).B != 255)
+                        n3 += Math.Pow(i - x, 2) * Math.Pow(j - y, 0) * ((0.3 * matrix1.GetPixel(i, j).R + 0.59 * matrix1.GetPixel(i, j).G + 0.11 * matrix1.GetPixel(i, j).B));
+                }
+            }
             cResult.Add(n3);
+            double n2 = 0;
+            for (int i = 0; i < matrix1.Height; i++)
+            {
+                for (int j = 0; j < matrix1.Width; j++)
+                {
+                    if (0.3 * matrix1.GetPixel(i, j).R + 0.59 * matrix1.GetPixel(i, j).G + 0.11 * matrix1.GetPixel(i, j).B != 255)
+                        n2 += Math.Pow(i - x, 0) * Math.Pow(j - y, 2) * ((0.3 * matrix1.GetPixel(i, j).R + 0.59 * matrix1.GetPixel(i, j).G + 0.11 * matrix1.GetPixel(i, j).B));
+                }
+            }
+            cResult.Add(n2);
             GradusRes();
         }
        
