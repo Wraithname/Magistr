@@ -27,15 +27,42 @@ namespace Magistr
         }
         private void CMoment()
         {
-            double x = Math.Round(result[2] / result[0], mode: MidpointRounding.AwayFromZero);
-            double y = Math.Round(result[1] / result[0], mode: MidpointRounding.AwayFromZero);
+            double x = Math.Round(result[1] / result[0]);
+            double y = Math.Round(result[2] / result[0]);
             center[0] = x;
             center[1] = y;
-            double n1 = result[3]/result[0]-x*y;
+            double n1 = 0;
+            n1 = result[3] - x * result[1];
+            //for (int i = 0; i < matrix1.Height; i++)
+            //{
+            //    for (int j = 0; j < matrix1.Width; j++)
+            //    {
+            //        if (matrix1.GetPixel(i, j).R != 255 && matrix1.GetPixel(i, j).G != 255 && matrix1.GetPixel(i, j).B != 255)
+            //            n1 += Math.Pow(i-x, 1) * Math.Pow(j-y, 1) * ((0.3 * matrix1.GetPixel(i, j).R + 0.59 * matrix1.GetPixel(i, j).G + 0.11 * matrix1.GetPixel(i, j).B));
+            //    }
+            //}
             cResult.Add(n1);
-            double n2 = result[4] / result[0] - y * y;
+            double n2 = 0;
+            n2 = result[5] - x * result[2];
+            //for (int i = 0; i < matrix1.Height; i++)
+            //{
+            //    for (int j = 0; j < matrix1.Width; j++)
+            //    {
+            //        if (matrix1.GetPixel(i, j).R != 255 && matrix1.GetPixel(i, j).G != 255 && matrix1.GetPixel(i, j).B != 255)
+            //            n1 += Math.Pow(i - x, 0) * Math.Pow(j - y, 2) * ((0.3 * matrix1.GetPixel(i, j).R + 0.59 * matrix1.GetPixel(i, j).G + 0.11 * matrix1.GetPixel(i, j).B));
+            //    }
+            //}
             cResult.Add(n2);
-            double n3 =result[5] / result[0] - x * x;
+            double n3 = 0;
+            n3 = result[4] - x * result[1];
+            //for (int i = 0; i < matrix1.Height; i++)
+            //{
+            //    for (int j = 0; j < matrix1.Width; j++)
+            //    {
+            //        if (matrix1.GetPixel(i, j).R != 255 && matrix1.GetPixel(i, j).G != 255 && matrix1.GetPixel(i, j).B != 255)
+            //            n3 += Math.Pow(i - x, 2) * Math.Pow(j - y, 0) * ((0.3 * matrix1.GetPixel(i, j).R + 0.59 * matrix1.GetPixel(i, j).G + 0.11 * matrix1.GetPixel(i, j).B));
+            //    }
+            //}
             cResult.Add(n3);
             GradusRes();
         }
@@ -73,7 +100,7 @@ namespace Magistr
             {
                 for (int y = 0; y < matrix1.Width; y++)
                 {
-                    if (matrix1.GetPixel(x, y).R != 255 && matrix1.GetPixel(x, y).G != 255 && matrix1.GetPixel(x, y).B != 255)
+                    if (0.3 * matrix1.GetPixel(x, y).R + 0.59 * matrix1.GetPixel(x, y).G + 0.11 * matrix1.GetPixel(x, y).B != 255)
                         h += Math.Pow(x, 0) * Math.Pow(y, 0) * ((0.3 * matrix1.GetPixel(x, y).R + 0.59 * matrix1.GetPixel(x, y).G + 0.11 * matrix1.GetPixel(x, y).B));
                 }
             }
@@ -87,7 +114,7 @@ namespace Magistr
             {
                 for (int y = 0; y < matrix2.Width; y++)
                 {
-                    if (matrix2.GetPixel(x, y).R != 255 && matrix2.GetPixel(x, y).G != 255 && matrix2.GetPixel(x, y).B != 255)
+                    if (0.3 * matrix1.GetPixel(x, y).R + 0.59 * matrix1.GetPixel(x, y).G + 0.11 * matrix1.GetPixel(x, y).B != 255)
                         h += Math.Pow(x, 0) * Math.Pow(y, 1) * ((0.3 * matrix2.GetPixel(x, y).R + 0.59 * matrix2.GetPixel(x, y).G + 0.11 * matrix2.GetPixel(x, y).B));
                 }
             }
@@ -97,7 +124,7 @@ namespace Magistr
             {
                 for (int y = 0; y < matrix2.Width; y++)
                 {
-                    if (matrix2.GetPixel(x, y).R != 255 && matrix2.GetPixel(x, y).G != 255 && matrix2.GetPixel(x, y).B != 255)
+                    if (0.3 * matrix1.GetPixel(x, y).R + 0.59 * matrix1.GetPixel(x, y).G + 0.11 * matrix1.GetPixel(x, y).B != 255)
                         h += Math.Pow(x, 1) * Math.Pow(y, 0) * ((0.3 * matrix2.GetPixel(x, y).R + 0.59 * matrix2.GetPixel(x, y).G + 0.11 * matrix2.GetPixel(x, y).B));
                 }
             }
@@ -107,7 +134,7 @@ namespace Magistr
             {
                 for (int y = 0; y < matrix2.Width; y++)
                 {
-                    if (matrix2.GetPixel(x, y).R != 255 && matrix2.GetPixel(x, y).G != 255 && matrix2.GetPixel(x, y).B != 255)
+                    if (0.3 * matrix1.GetPixel(x, y).R + 0.59 * matrix1.GetPixel(x, y).G + 0.11 * matrix1.GetPixel(x, y).B != 255)
                         h += Math.Pow(x, 1) * Math.Pow(y, 1) * ((0.3 * matrix2.GetPixel(x, y).R + 0.59 * matrix2.GetPixel(x, y).G + 0.11 * matrix2.GetPixel(x, y).B));
                 }
             }
@@ -122,7 +149,7 @@ namespace Magistr
             {
                 for (int y = 0; y < matrix3.Width; y++)
                 {
-                    if (matrix3.GetPixel(x, y).R != 255 && matrix3.GetPixel(x, y).G != 255 && matrix3.GetPixel(x, y).B != 255)
+                    if (0.3 * matrix1.GetPixel(x, y).R + 0.59 * matrix1.GetPixel(x, y).G + 0.11 * matrix1.GetPixel(x, y).B != 255)
                         h += Math.Pow(x, 0) * Math.Pow(y, 2) * ((0.3 * matrix3.GetPixel(x, y).R + 0.59 * matrix3.GetPixel(x, y).G + 0.11 * matrix3.GetPixel(x, y).B));
                 }
             }
@@ -132,7 +159,7 @@ namespace Magistr
             {
                 for (int y = 0; y < matrix3.Width; y++)
                 {
-                    if (matrix3.GetPixel(x, y).R != 255 && matrix3.GetPixel(x, y).G != 255 && matrix3.GetPixel(x, y).B != 255)
+                    if (0.3 * matrix1.GetPixel(x, y).R + 0.59 * matrix1.GetPixel(x, y).G + 0.11 * matrix1.GetPixel(x, y).B != 255)
                         h += Math.Pow(x, 2) * Math.Pow(y, 0) * ((0.3 * matrix3.GetPixel(x, y).R + 0.59 * matrix3.GetPixel(x, y).G + 0.11 * matrix3.GetPixel(x, y).B));
                 }
             }
