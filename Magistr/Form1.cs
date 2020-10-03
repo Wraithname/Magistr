@@ -2,130 +2,274 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace Magistr
 {
     public partial class Form1 : Form
     {
-        Moment matr;
-        List<double> res;
+        Moment matr1;
+        Moment matr2;
+        Moment matr3;
+        double[] res1;
+        double[] res2;
+        double[] res3;
+        int thcol1;
+        int thcol2;
+        int thcol3;
+        string[] count;
         double angle;
-        Bitmap image;
-        string rpath = "C:\\3";
-        string sipath = "C:\\r";
-        int ri = 1;
-        StreamWriter sw;
+        string rpath;
+        string sipath;
+        string fpath ;
+        string fpath1 ;
+        string fpath2 ;
+        string fpath3 ;
+        int ri1 = 1;
+        int ri2 = 100;
+        int ri3 = 200;
+        int step;
         Stopwatch stopwatch = new Stopwatch();
-        Stopwatch rec = new Stopwatch();
+        Stopwatch rec1 = new Stopwatch();
+        Stopwatch rec2 = new Stopwatch();
+        Stopwatch rec3 = new Stopwatch();
+        
         public Form1()
         {
-            res = new List<double>();
-            sw = new StreamWriter(sipath + "\\result.txt");
             InitializeComponent();
-            notifyIcon1.Visible = false;
-            this.notifyIcon1.MouseDoubleClick += new MouseEventHandler(notifyIcon1_MouseDoubleClick);
-            this.Resize += new System.EventHandler(this.Form1_Resize);
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             stopwatch.Start();
             button1.Enabled = false;
-            for (int i = 1; i < 360; i++)
+            var threads = new Thread[3];
+            threads[0] = new Thread(Schet1);
+            threads[1] = new Thread(Schet2);
+            threads[2] = new Thread(Schet3);
+            threads[0].Start();
+            threads[1].Start();
+            threads[2].Start();
+            for (int i = 0; i < 3; i++)
             {
-                rec.Start();
-                try
-                {
-                    image = new Bitmap(pictureBox1.Image);
-                    matr = new Moment(image);
-                    matr.GetRes();
-                    res = matr.cResult;
-                    angle = matr.gradus;
-                    WriteToFile();
-                    rec.Stop();
-                    sw.WriteLine("Время обработки: " + (rec.ElapsedMilliseconds / 1000) + " сек");
-                    rec.Reset();
-                }
-                catch {
-                    rec.Stop();
-                    rec.Reset();
-                    sw.WriteLine("Изображение " + ri + ".png отсутствует");
-                }
+                threads[i].Join();
             }
             stopwatch.Stop();
-            sw.WriteLine("Время работы программы: "+ (stopwatch.ElapsedMilliseconds/1000)+" сек");
-            sw.WriteLine("Среднее время на обработку 1 изображения: "+ ((stopwatch.ElapsedMilliseconds / 1000)/360) + " сек");
-            sw.Flush();
-            sw.Close();
-            MessageBox.Show("Обработка завершена. Программа закроется автоматически. Результаты обработки хранятся по пути: "+sipath, "Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            string[] lines = File.ReadAllLines(fpath1);
+            File.AppendAllLines(fpath, lines);
+            File.Delete(fpath1);
+            lines = File.ReadAllLines(fpath2);
+            File.AppendAllLines(fpath, lines);
+            File.Delete(fpath2);
+            lines = File.ReadAllLines(fpath3);
+            File.AppendAllLines(fpath, lines);
+            File.Delete(fpath3);
+            File.AppendAllText(fpath, "Время работы программы: " + (stopwatch.ElapsedMilliseconds / 1000) + " сек" + Environment.NewLine);
+            File.AppendAllText(fpath, "Среднее время на обработку 1 изображения: " + ((stopwatch.ElapsedMilliseconds / 1000) / 360) + " сек" + Environment.NewLine);
+            MessageBox.Show("Обработка завершена. Программа закроется автоматически. Результаты обработки хранятся по пути: " + sipath, "Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
             Application.Exit();
-            //showMatrix();
         }
-        /*
-        private void showMatrix()
+        private void Schet1()
         {
-            txt1.Text = matr.center[0].ToString()+" : "+ matr.center[1].ToString();
-            txt4.Text = res[0].ToString();
-            txt5.Text = res[1].ToString();
-            txt6.Text = res[2].ToString();
-            textBox1.Text = matr.gradus.ToString();
-        }
-        */
-        private void WriteToFile()
-        {
-            sw.WriteLine("Результат обработки изображения " + ri + ".png");
-                sw.WriteLine("Координаты центра: "+ matr.center[0].ToString() + " : " + matr.center[1].ToString());
-                sw.WriteLine("M 1:1 = " + res[0].ToString());
-                sw.WriteLine("M 2:0 = " + res[1].ToString());
-                sw.WriteLine("M 0:2 = " + res[2].ToString());
-                sw.WriteLine("Угол поворота: " + matr.gradus.ToString());
-            using (Bitmap clone = (Bitmap)pictureBox1.Image.Clone())
+            for (int i = 1; i < thcol1; i++)
             {
-                using (Graphics gfx = Graphics.FromImage(clone))
+                rec1.Start();
+                try
                 {
-                    gfx.Clear(Color.Transparent);
-                    gfx.TranslateTransform(pictureBox1.Image.Width / 2, pictureBox1.Image.Height / 2);
-                    gfx.RotateTransform((float)angle);
-                    gfx.DrawImage(pictureBox1.Image, -pictureBox1.Image.Width / 2, -pictureBox1.Image.Height / 2);
+                    Image img = Image.FromFile(rpath + "\\" + i + ".png");
+                    Invalidate();
+                    Bitmap image1 = new Bitmap(img);
+                    matr1 = new Moment(image1);
+                    matr1.GetRes();
+                    res1 = matr1.cResult;
+                    angle = matr1.gradus;
+                    WriteToFile1(img,(float)angle,i);
+                    rec1.Stop();
+                    File.AppendAllText(fpath1, "Время обработки: " + (rec1.ElapsedMilliseconds / 1000) + " сек" + Environment.NewLine);
+                    File.AppendAllText(fpath1, "---------------------------------------------------------" + Environment.NewLine);
+                    rec1.Reset();
                 }
-                clone.Save(sipath + "\\" + ri + ".png");
-                ri++;
+                catch
+                {
+                    rec1.Stop();
+                    rec1.Reset();
+                }
             }
         }
-
-        private void Form1_Resize(object sender, EventArgs e)
+        private void Schet2()
         {
-            if (WindowState == FormWindowState.Minimized)
+            for (int i = thcol2-step; i < thcol2; i++)
             {
-                this.ShowInTaskbar = false;
-                notifyIcon1.Visible = true;
+                rec2.Start();
+                try
+                {
+                    Image img = Image.FromFile(rpath + "\\" + i + ".png");
+                    Invalidate();
+                    Bitmap image2 = new Bitmap(img);
+                    matr2 = new Moment(image2);
+                    matr2.GetRes();
+                    res2 = matr2.cResult;
+                    angle = matr2.gradus;
+                    WriteToFile2(img,(float)angle,i);
+                    rec2.Stop();
+                    File.AppendAllText(fpath2, "Время обработки: " + (rec2.ElapsedMilliseconds / 1000) + " сек" + Environment.NewLine);
+                    File.AppendAllText(fpath2, "---------------------------------------------------------" + Environment.NewLine);
+                    rec2.Reset();
+                }
+                catch
+                {
+                    rec2.Stop();
+                    rec2.Reset();
+                    File.AppendAllText(fpath2, "---------------------------------------------------------" + Environment.NewLine);
+                    File.AppendAllText(fpath2, "Изображение " + ri2 + ".png отсутствует" + Environment.NewLine);
+                    File.AppendAllText(fpath2, "---------------------------------------------------------" + Environment.NewLine);
+                    ri2++;
+                }
             }
         }
-
-        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void Schet3()
         {
-            notifyIcon1.Visible = false;
-            this.ShowInTaskbar = true;
-            WindowState = FormWindowState.Normal;
+            for (int i = thcol3-step; i < thcol3; i++)
+            {
+                rec3.Start();
+                try
+                {
+                    Image img = Image.FromFile(rpath + "\\" + i + ".png");
+                    Invalidate();
+                    Bitmap image3 = new Bitmap(img);
+                    matr3 = new Moment(image3);
+                    matr3.GetRes();
+                    res3 = matr3.cResult;
+                    angle = matr3.gradus;
+                    WriteToFile3(img,(float)angle,i);
+                    rec3.Stop();
+                    File.AppendAllText(fpath3, "Время обработки: " + (rec3.ElapsedMilliseconds / 1000) + " сек" + Environment.NewLine);
+                    File.AppendAllText(fpath3, "---------------------------------------------------------" + Environment.NewLine);
+                    rec3.Reset();
+                }
+                catch
+                {
+                    rec3.Stop();
+                    rec3.Reset();
+                    File.AppendAllText(fpath3, "---------------------------------------------------------" + Environment.NewLine);
+                    File.AppendAllText(fpath3, "Изображение " + ri3 + ".png отсутствует" + Environment.NewLine);
+                    File.AppendAllText(fpath3, "---------------------------------------------------------" + Environment.NewLine);
+                    ri3++;
+                }
+            }
         }
-        /*
-protected override void OnPaint(PaintEventArgs e)
-{
-using (Bitmap clone = (Bitmap)pictureBox1.Image.Clone())
-{
-using (Graphics gfx = Graphics.FromImage(clone))
-{
-gfx.Clear(Color.Transparent);
-gfx.TranslateTransform(pictureBox1.Image.Width / 2, pictureBox1.Image.Height / 2);
-gfx.RotateTransform((float)angle);
-gfx.DrawImage(pictureBox1.Image, -pictureBox1.Image.Width / 2, -pictureBox1.Image.Height / 2);
-}
-pictureBox1.Image = (Bitmap)clone.Clone();
-}
-}
-*/
+        private void WriteToFile1(Image img,Single angle,int num)
+        {
+            File.AppendAllText(fpath1, "---------------------------------------------------------" + Environment.NewLine);
+            File.AppendAllText(fpath1, "Результат обработки изображения " + count[num].Split('\\').Last() + Environment.NewLine);
+            File.AppendAllText(fpath1, "Координаты центра: " + matr1.center[0].ToString() + " : " + matr1.center[1].ToString() + Environment.NewLine);
+            File.AppendAllText(fpath1, "M 1:1 = " + res1[0].ToString() + Environment.NewLine);
+            File.AppendAllText(fpath1, "M 2:0 = " + res1[1].ToString() + Environment.NewLine);
+            File.AppendAllText(fpath1, "M 0:2 = " + res1[2].ToString() + Environment.NewLine);
+            File.AppendAllText(fpath1, "Угол поворота: " + matr1.gradus.ToString() + Environment.NewLine);
+            img = RotateImage1(img, (float)angle);
+            img.Save(sipath + "\\" + count[num].Split('\\').Last());
+        }
+        private void WriteToFile2(Image img, Single angle, int num)
+        {
+            File.AppendAllText(fpath2, "---------------------------------------------------------" + Environment.NewLine);
+            File.AppendAllText(fpath2, "Результат обработки изображения " + count[num].Split('\\').Last() + Environment.NewLine);
+            File.AppendAllText(fpath2, "Координаты центра: " + matr2.center[0].ToString() + " : " + matr2.center[1].ToString() + Environment.NewLine);
+            File.AppendAllText(fpath2, "M 1:1 = " + res2[0].ToString() + Environment.NewLine);
+            File.AppendAllText(fpath2, "M 2:0 = " + res2[1].ToString() + Environment.NewLine);
+            File.AppendAllText(fpath2, "M 0:2 = " + res2[2].ToString() + Environment.NewLine);
+            File.AppendAllText(fpath2, "Угол поворота: " + matr2.gradus.ToString() + Environment.NewLine);
+            img = RotateImage2(img, (float)angle);
+            img.Save(sipath + "\\" + count[num].Split('\\').Last());
+        }
+        private void WriteToFile3(Image img, Single angle, int num)
+        {
+            File.AppendAllText(fpath3, "---------------------------------------------------------" + Environment.NewLine);
+            File.AppendAllText(fpath3, "Результат обработки изображения " + count[num].Split('\\').Last() + Environment.NewLine);
+            File.AppendAllText(fpath3, "Координаты центра: " + matr3.center[0].ToString() + " : " + matr3.center[1].ToString() + Environment.NewLine);
+            File.AppendAllText(fpath3, "M 1:1 = " + res3[0].ToString() + Environment.NewLine);
+            File.AppendAllText(fpath3, "M 2:0 = " + res3[1].ToString() + Environment.NewLine);
+            File.AppendAllText(fpath3, "M 0:2 = " + res3[2].ToString() + Environment.NewLine);
+            File.AppendAllText(fpath3, "Угол поворота: " + matr3.gradus.ToString() + Environment.NewLine);
+            img = RotateImage3(img, (float)angle);
+            img.Save(sipath + "\\" + count[num].Split('\\').Last());
+        }
+        protected static Image RotateImage1(Image pImage, Single pAngle)
+        {
+            Matrix lMatrix = new Matrix();
+            lMatrix.RotateAt(pAngle, new PointF(pImage.Width / 2, pImage.Height / 2));
+            Bitmap lNewBitmap = new Bitmap(pImage.Width, pImage.Height);
+            lNewBitmap.SetResolution(pImage.HorizontalResolution, pImage.VerticalResolution);
+            Graphics lGraphics = Graphics.FromImage(lNewBitmap);
+            lGraphics.Transform = lMatrix;
+            lGraphics.DrawImage(pImage, 0, 0);
+            lGraphics.Dispose();
+            lMatrix.Dispose();
+            return lNewBitmap;
+        }
+        protected static Image RotateImage2(Image pImage, Single pAngle)
+        {
+            Matrix lMatrix = new Matrix();
+            lMatrix.RotateAt(pAngle, new PointF(pImage.Width / 2, pImage.Height / 2));
+            Bitmap lNewBitmap = new Bitmap(pImage.Width, pImage.Height);
+            lNewBitmap.SetResolution(pImage.HorizontalResolution, pImage.VerticalResolution);
+            Graphics lGraphics = Graphics.FromImage(lNewBitmap);
+            lGraphics.Transform = lMatrix;
+            lGraphics.DrawImage(pImage, 0, 0);
+            lGraphics.Dispose();
+            lMatrix.Dispose();
+            return lNewBitmap;
+        }
+        protected static Image RotateImage3(Image pImage, Single pAngle)
+        {
+            Matrix lMatrix = new Matrix();
+            lMatrix.RotateAt(pAngle, new PointF(pImage.Width / 2, pImage.Height / 2));
+            Bitmap lNewBitmap = new Bitmap(pImage.Width, pImage.Height);
+            lNewBitmap.SetResolution(pImage.HorizontalResolution, pImage.VerticalResolution);
+            Graphics lGraphics = Graphics.FromImage(lNewBitmap);
+            lGraphics.Transform = lMatrix;
+            lGraphics.DrawImage(pImage, 0, 0);
+            lGraphics.Dispose();
+            lMatrix.Dispose();
+            return lNewBitmap;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
+            {
+                label5.Text = folderBrowserDialog1.SelectedPath;
+                rpath= folderBrowserDialog1.SelectedPath;
+            }
+            count = Directory.GetFiles(rpath);
+            int col = count.Length;
+            int steplast= col % 3;
+            step = col / 3;
+            thcol1 = step;
+            thcol2 = 2*step;
+            thcol3 = 3*step+steplast;
+            button2.Enabled = false;
+            button3.Enabled = true;
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
+            {
+                label6.Text = folderBrowserDialog1.SelectedPath;
+                sipath = folderBrowserDialog1.SelectedPath;
+                fpath = folderBrowserDialog1.SelectedPath + "\\result.txt";
+                fpath1 = folderBrowserDialog1.SelectedPath + "\\result1.txt";
+                fpath2 = folderBrowserDialog1.SelectedPath + "\\result2.txt";
+                fpath3 = folderBrowserDialog1.SelectedPath + "\\result3.txt";
+            }
+            button3.Enabled = false;
+            button1.Enabled = true;
+        }
     }
 }
