@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 
@@ -18,11 +19,15 @@ namespace Magistr
         int ri = 1;
         StreamWriter sw;
         Stopwatch stopwatch = new Stopwatch();
+        Stopwatch rec = new Stopwatch();
         public Form1()
         {
             res = new List<double>();
             sw = new StreamWriter(sipath + "\\result.txt");
             InitializeComponent();
+            notifyIcon1.Visible = false;
+            this.notifyIcon1.MouseDoubleClick += new MouseEventHandler(notifyIcon1_MouseDoubleClick);
+            this.Resize += new System.EventHandler(this.Form1_Resize);
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -31,19 +36,31 @@ namespace Magistr
             button1.Enabled = false;
             for (int i = 1; i < 360; i++)
             {
-                pictureBox1.Image = Image.FromFile(rpath + "\\" + i + ".png");
-                image = new Bitmap(pictureBox1.Image);
-                matr = new Moment(image);
-                matr.GetRes();
-                res = matr.cResult;
-                angle = matr.gradus;
-                WriteToFile();
+                rec.Start();
+                try
+                {
+                    image = new Bitmap(pictureBox1.Image);
+                    matr = new Moment(image);
+                    matr.GetRes();
+                    res = matr.cResult;
+                    angle = matr.gradus;
+                    WriteToFile();
+                    rec.Stop();
+                    sw.WriteLine("Время обработки: " + (rec.ElapsedMilliseconds / 1000) + " сек");
+                    rec.Reset();
+                }
+                catch {
+                    rec.Stop();
+                    rec.Reset();
+                    sw.WriteLine("Изображение " + ri + ".png отсутствует");
+                }
             }
             stopwatch.Stop();
-            sw.WriteLine("Время обработки: "+ (stopwatch.ElapsedMilliseconds/1000)+" сек");
+            sw.WriteLine("Время работы программы: "+ (stopwatch.ElapsedMilliseconds/1000)+" сек");
             sw.WriteLine("Среднее время на обработку 1 изображения: "+ ((stopwatch.ElapsedMilliseconds / 1000)/360) + " сек");
             sw.Flush();
             sw.Close();
+            MessageBox.Show("Обработка завершена. Программа закроется автоматически. Результаты обработки хранятся по пути: "+sipath, "Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
             Application.Exit();
             //showMatrix();
         }
@@ -78,21 +95,37 @@ namespace Magistr
                 ri++;
             }
         }
-        /*
-        protected override void OnPaint(PaintEventArgs e)
+
+        private void Form1_Resize(object sender, EventArgs e)
         {
-            using (Bitmap clone = (Bitmap)pictureBox1.Image.Clone())
+            if (WindowState == FormWindowState.Minimized)
             {
-                using (Graphics gfx = Graphics.FromImage(clone))
-                {
-                    gfx.Clear(Color.Transparent);
-                    gfx.TranslateTransform(pictureBox1.Image.Width / 2, pictureBox1.Image.Height / 2);
-                    gfx.RotateTransform((float)angle);
-                    gfx.DrawImage(pictureBox1.Image, -pictureBox1.Image.Width / 2, -pictureBox1.Image.Height / 2);
-                }
-                pictureBox1.Image = (Bitmap)clone.Clone();
+                this.ShowInTaskbar = false;
+                notifyIcon1.Visible = true;
             }
         }
-        */
+
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            notifyIcon1.Visible = false;
+            this.ShowInTaskbar = true;
+            WindowState = FormWindowState.Normal;
+        }
+        /*
+protected override void OnPaint(PaintEventArgs e)
+{
+using (Bitmap clone = (Bitmap)pictureBox1.Image.Clone())
+{
+using (Graphics gfx = Graphics.FromImage(clone))
+{
+gfx.Clear(Color.Transparent);
+gfx.TranslateTransform(pictureBox1.Image.Width / 2, pictureBox1.Image.Height / 2);
+gfx.RotateTransform((float)angle);
+gfx.DrawImage(pictureBox1.Image, -pictureBox1.Image.Width / 2, -pictureBox1.Image.Height / 2);
+}
+pictureBox1.Image = (Bitmap)clone.Clone();
+}
+}
+*/
     }
 }
