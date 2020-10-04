@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Magistr

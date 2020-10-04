@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -76,12 +74,10 @@ namespace Magistr
         }
         private void Schet1()
         {
-            for (int i = 1; i < thcol1; i++)
+            for (int i = 0; i < thcol1; i++)
             {
                 rec1.Start();
-                try
-                {
-                    Image img = Image.FromFile(rpath + "\\" + i + ".png");
+                    Image img = Image.FromFile(count[i]);
                     Invalidate();
                     Bitmap image1 = new Bitmap(img);
                     matr1 = new Moment(image1);
@@ -93,22 +89,14 @@ namespace Magistr
                     File.AppendAllText(fpath1, "Время обработки: " + (rec1.ElapsedMilliseconds / 1000) + " сек" + Environment.NewLine);
                     File.AppendAllText(fpath1, "---------------------------------------------------------" + Environment.NewLine);
                     rec1.Reset();
-                }
-                catch
-                {
-                    rec1.Stop();
-                    rec1.Reset();
-                }
             }
         }
         private void Schet2()
         {
-            for (int i = thcol2-step; i < thcol2; i++)
+            for (int i = thcol1; i < thcol2; i++)
             {
                 rec2.Start();
-                try
-                {
-                    Image img = Image.FromFile(rpath + "\\" + i + ".png");
+                    Image img = Image.FromFile(count[i]);
                     Invalidate();
                     Bitmap image2 = new Bitmap(img);
                     matr2 = new Moment(image2);
@@ -120,26 +108,14 @@ namespace Magistr
                     File.AppendAllText(fpath2, "Время обработки: " + (rec2.ElapsedMilliseconds / 1000) + " сек" + Environment.NewLine);
                     File.AppendAllText(fpath2, "---------------------------------------------------------" + Environment.NewLine);
                     rec2.Reset();
-                }
-                catch
-                {
-                    rec2.Stop();
-                    rec2.Reset();
-                    File.AppendAllText(fpath2, "---------------------------------------------------------" + Environment.NewLine);
-                    File.AppendAllText(fpath2, "Изображение " + ri2 + ".png отсутствует" + Environment.NewLine);
-                    File.AppendAllText(fpath2, "---------------------------------------------------------" + Environment.NewLine);
-                    ri2++;
-                }
             }
         }
         private void Schet3()
         {
-            for (int i = thcol3-step; i < thcol3; i++)
+            for (int i = thcol2; i < thcol3; i++)
             {
                 rec3.Start();
-                try
-                {
-                    Image img = Image.FromFile(rpath + "\\" + i + ".png");
+                    Image img = Image.FromFile(count[i]);
                     Invalidate();
                     Bitmap image3 = new Bitmap(img);
                     matr3 = new Moment(image3);
@@ -151,16 +127,6 @@ namespace Magistr
                     File.AppendAllText(fpath3, "Время обработки: " + (rec3.ElapsedMilliseconds / 1000) + " сек" + Environment.NewLine);
                     File.AppendAllText(fpath3, "---------------------------------------------------------" + Environment.NewLine);
                     rec3.Reset();
-                }
-                catch
-                {
-                    rec3.Stop();
-                    rec3.Reset();
-                    File.AppendAllText(fpath3, "---------------------------------------------------------" + Environment.NewLine);
-                    File.AppendAllText(fpath3, "Изображение " + ri3 + ".png отсутствует" + Environment.NewLine);
-                    File.AppendAllText(fpath3, "---------------------------------------------------------" + Environment.NewLine);
-                    ri3++;
-                }
             }
         }
         private void WriteToFile1(Image img,Single angle,int num)
@@ -247,6 +213,13 @@ namespace Magistr
                 rpath= folderBrowserDialog1.SelectedPath;
             }
             count = Directory.GetFiles(rpath);
+            string[] result = (from s in count
+                               let dt = s.Split('\\').Last()
+                               let dt2 = Int32.Parse(dt.Split('.').First())
+                               orderby dt2
+                               select s)
+         .ToArray();
+            count = result;
             int col = count.Length;
             int steplast= col % 3;
             step = col / 3;
