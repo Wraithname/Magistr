@@ -68,7 +68,6 @@ namespace Magistr
             File.AppendAllLines(fpath, lines);
             File.Delete(fpath3);
             File.AppendAllText(fpath, "Время работы программы: " + (stopwatch.ElapsedMilliseconds / 1000) + " сек" + Environment.NewLine);
-            File.AppendAllText(fpath, "Среднее время на обработку 1 изображения: " + ((stopwatch.ElapsedMilliseconds / 1000) / 360) + " сек" + Environment.NewLine);
             MessageBox.Show("Обработка завершена. Программа закроется автоматически. Результаты обработки хранятся по пути: " + sipath, "Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
             Application.Exit();
         }
