@@ -14,12 +14,14 @@ namespace Magistr
         public double[] cResult = new double[3];
         public double[] center;
         public double gradus;
+        private double[,] matrix;
         public Moment(Bitmap img)
         {
             this.matrix1 = img;
             this.matrix2 = img;
             this.matrix3 = img;
             this.center = new double[2];
+            this.matrix = new double[img.Height, img.Width];
         }
         private void CMoment()
         {
@@ -30,8 +32,7 @@ namespace Magistr
             {
                 for (int j = 0; j < matrix1.Width; j++)
                 {
-                    sp = 0.3 * matrix1.GetPixel(i, j).R + 0.59 * matrix1.GetPixel(i, j).G + 0.11 * matrix1.GetPixel(i, j).B;
-                    if (sp != 255)
+                    if (matrix[i, j] != 255)
                         maxpoint++;
                 }
             }
@@ -39,8 +40,7 @@ namespace Magistr
             {
                 for (int j = 0; j < matrix1.Width; j++)
                 {
-                    sp = 0.3 * matrix1.GetPixel(i, j).R + 0.59 * matrix1.GetPixel(i, j).G + 0.11 * matrix1.GetPixel(i, j).B;
-                    if (sp != 255)
+                    if (matrix[i, j] != 255)
                         x+=i;
                 }
             }
@@ -49,8 +49,7 @@ namespace Magistr
             {
                 for (int j = 0; j < matrix1.Width; j++)
                 {
-                    sp = 0.3 * matrix1.GetPixel(i, j).R + 0.59 * matrix1.GetPixel(i, j).G + 0.11 * matrix1.GetPixel(i, j).B;
-                    if (sp != 255)
+                    if (matrix[i, j] != 255)
                         y+=j;
                 }
             }
@@ -64,9 +63,8 @@ namespace Magistr
             {
                 for (int j = 0; j < matrix1.Width; j++)
                 {
-                    sp = 0.3 * matrix1.GetPixel(i, j).R + 0.59 * matrix1.GetPixel(i, j).G + 0.11 * matrix1.GetPixel(i, j).B;
-                    if (sp != 255)
-                        n1 += (i - x) * (j - y) * sp;
+                    if (matrix[i, j] != 255)
+                        n1 += (i - x) * (j - y) * matrix[i, j];
                 }
             }
             cResult[0]=n1;
@@ -75,9 +73,8 @@ namespace Magistr
             {
                 for (int j = 0; j < matrix1.Width; j++)
                 {
-                    sp = 0.3 * matrix1.GetPixel(i, j).R + 0.59 * matrix1.GetPixel(i, j).G + 0.11 * matrix1.GetPixel(i, j).B;
-                    if (sp != 255)
-                        n3 += (i - x)* (i - x) * 1 * sp;
+                    if (matrix[i, j] != 255)
+                        n3 += (i - x)* (i - x) * 1 * matrix[i, j];
                 }
             }
             cResult[1]=n3;
@@ -86,9 +83,8 @@ namespace Magistr
             {
                 for (int j = 0; j < matrix1.Width; j++)
                 {
-                    sp = 0.3 * matrix1.GetPixel(i, j).R + 0.59 * matrix1.GetPixel(i, j).G + 0.11 * matrix1.GetPixel(i, j).B;
-                    if (sp != 255)
-                        n2 += 1 * (j - y) * (j - y) * sp;
+                    if (matrix[i, j] != 255)
+                        n2 += 1 * (j - y) * (j - y) * matrix[i, j];
                 }
             }
             cResult[2]=n2;
@@ -98,48 +94,40 @@ namespace Magistr
         private void GradusRes()
         {
             gradus = Math.Round(0.5 * Math.Atan((2 * (cResult[0])) / (cResult[1] - cResult[2])) * -(180.0 / Math.PI), 0, mode: MidpointRounding.AwayFromZero);
+            if (cResult[2] > cResult[1])
+                gradus += 90;
         }
         public void GetRes()
         {
-            Task<double> res0 = new Task<double>(UnM0);
-            Task<double[]> res1 = new Task<double[]>(UnM1);
-            Task<double[]> res2 = new Task<double[]>(UnM2);
-            res0.RunSynchronously();
-            res1.RunSynchronously();
-            res2.RunSynchronously();
-            res0.Wait();
-            res1.Wait();
-            res2.Wait();
+            double res0 = UnM0();
+            double[] res1 = UnM1();
+            double[] res2 = UnM2();
             int j = 0;
-            result[j]=res0.Result;
+            result[j]=res0;
             j++;
-            res0.Dispose();
-            for (int i = 0; i < res1.Result.Length; i++)
+            for (int i = 0; i < res1.Length; i++)
             {
-                result[j]=res1.Result[i];
+                result[j]=res1[i];
                 j++;
             }
-            res1.Dispose();
-            for (int i = 0; i < res2.Result.Length; i++)
+            for (int i = 0; i < res2.Length; i++)
             {
-                result[j] = res2.Result[i];
+                result[j] = res2[i];
                 j++;
             }
-            res2.Dispose();
             CMoment();
         }
         private double UnM0()
         {
             double h = 0;
-            double sp;
             //Порядок 0
             for (int x = 0; x < matrix1.Height; x++)
             {
                 for (int y = 0; y < matrix1.Width; y++)
                 {
-                    sp = 0.3 * matrix1.GetPixel(x, y).R + 0.59 * matrix1.GetPixel(x, y).G + 0.11 * matrix1.GetPixel(x, y).B;
-                    if (sp != 255)
-                        h += 1 * 1 * sp;
+                    matrix[x, y] = 0.3 * matrix1.GetPixel(x, y).R + 0.59 * matrix1.GetPixel(x, y).G + 0.11 * matrix1.GetPixel(x, y).B;
+                    if (matrix[x, y] != 255)
+                        h += 1 * 1 * matrix[x, y];
                 }
             }
             return h;
@@ -148,14 +136,12 @@ namespace Magistr
         {
             double[] rec = new double[3];
             double h = 0;
-            double sp;
             for (int x = 0; x < matrix2.Height; x++)
             {
                 for (int y = 0; y < matrix2.Width; y++)
                 {
-                    sp = 0.3 * matrix1.GetPixel(x, y).R + 0.59 * matrix1.GetPixel(x, y).G + 0.11 * matrix1.GetPixel(x, y).B;
-                    if (sp != 255)
-                        h += 1 * y * sp;
+                    if (matrix[x, y] != 255)
+                        h += 1 * y * matrix[x, y];
                 }
             }
             rec[0]=h;
@@ -163,10 +149,9 @@ namespace Magistr
             for (int x = 0; x < matrix2.Height; x++)
             {
                 for (int y = 0; y < matrix2.Width; y++)
-                {
-                    sp = 0.3 * matrix1.GetPixel(x, y).R + 0.59 * matrix1.GetPixel(x, y).G + 0.11 * matrix1.GetPixel(x, y).B;
-                    if (sp != 255)
-                        h += x * 1 * sp;
+                {   
+                    if (matrix[x, y]  != 255)
+                        h += x * 1 * matrix[x, y];
                 }
             }
             rec[1]=h;
@@ -175,9 +160,8 @@ namespace Magistr
             {
                 for (int y = 0; y < matrix2.Width; y++)
                 {
-                    sp = 0.3 * matrix1.GetPixel(x, y).R + 0.59 * matrix1.GetPixel(x, y).G + 0.11 * matrix1.GetPixel(x, y).B;
-                    if (sp != 255)
-                        h += x * y * sp;
+                    if (matrix[x, y] != 255)
+                        h += x * y * matrix[x, y];
                 }
             }
             rec[2]=h;
@@ -187,14 +171,12 @@ namespace Magistr
         {
             double[] rec = new double[2];
             double h = 0;
-            double sp;
             for (int x = 0; x < matrix3.Height; x++)
             {
                 for (int y = 0; y < matrix3.Width; y++)
                 {
-                    sp = 0.3 * matrix1.GetPixel(x, y).R + 0.59 * matrix1.GetPixel(x, y).G + 0.11 * matrix1.GetPixel(x, y).B;
-                    if (sp != 255)
-                        h += 1 *y*y * sp;
+                    if (matrix[x, y] != 255)
+                        h += 1 *y*y * matrix[x, y];
                 }
             }
             rec[0]=h;
@@ -203,9 +185,8 @@ namespace Magistr
             {
                 for (int y = 0; y < matrix3.Width; y++)
                 {
-                    sp = 0.3 * matrix1.GetPixel(x, y).R + 0.59 * matrix1.GetPixel(x, y).G + 0.11 * matrix1.GetPixel(x, y).B;
-                    if (sp != 255)
-                        h += x*x * 1 * sp;
+                    if (matrix[x, y] != 255)
+                        h += x*x * 1 * matrix[x, y];
                 }
             }
             rec[1]=h;
