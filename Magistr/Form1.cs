@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -28,9 +29,7 @@ namespace Magistr
         string fpath1 ;
         string fpath2 ;
         string fpath3 ;
-        int ri1 = 1;
-        int ri2 = 100;
-        int ri3 = 200;
+        double[] center;
         int step;
         Stopwatch stopwatch = new Stopwatch();
         Stopwatch rec1 = new Stopwatch();
@@ -44,6 +43,7 @@ namespace Magistr
 
         private void button1_Click(object sender, EventArgs e)
         {
+            string[] lines = null;
             stopwatch.Start();
             button1.Enabled = false;
             var threads = new Thread[3];
@@ -58,15 +58,24 @@ namespace Magistr
                 threads[i].Join();
             }
             stopwatch.Stop();
-            string[] lines = File.ReadAllLines(fpath1);
-            File.AppendAllLines(fpath, lines);
-            File.Delete(fpath1);
-            lines = File.ReadAllLines(fpath2);
-            File.AppendAllLines(fpath, lines);
-            File.Delete(fpath2);
-            lines = File.ReadAllLines(fpath3);
-            File.AppendAllLines(fpath, lines);
-            File.Delete(fpath3);
+            if (thcol1 != 0)
+            {
+                lines = File.ReadAllLines(fpath1);
+                File.AppendAllLines(fpath, lines);
+                File.Delete(fpath1);
+            }
+            if (thcol2 != 0)
+            {
+                lines = File.ReadAllLines(fpath2);
+                File.AppendAllLines(fpath, lines);
+                File.Delete(fpath2);
+            }
+            if (thcol3 != 0)
+            {
+                lines = File.ReadAllLines(fpath3);
+                File.AppendAllLines(fpath, lines);
+                File.Delete(fpath3);
+            }
             File.AppendAllText(fpath, "Время работы программы: " + (stopwatch.ElapsedMilliseconds / 1000) + " сек" + Environment.NewLine);
             MessageBox.Show("Обработка завершена. Программа закроется автоматически. Результаты обработки хранятся по пути: " + sipath, "Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
             Application.Exit();
@@ -82,9 +91,11 @@ namespace Magistr
                     matr1 = new Moment(image1);
                     matr1.GetRes();
                     res1 = matr1.cResult;
+                center = matr1.center;
                     angle = matr1.gradus;
-                    WriteToFile1(img,(float)angle,i);
-                    rec1.Stop();
+                img = WriteToFile1(img, (float)angle, i);
+                PaintReactangel(img, (float)angle);
+                rec1.Stop();
                     File.AppendAllText(fpath1, "Время обработки: " + (rec1.ElapsedMilliseconds / 1000) + " сек" + Environment.NewLine);
                     File.AppendAllText(fpath1, "---------------------------------------------------------" + Environment.NewLine);
                     rec1.Reset();
@@ -102,8 +113,9 @@ namespace Magistr
                     matr2.GetRes();
                     res2 = matr2.cResult;
                     angle = matr2.gradus;
-                    WriteToFile2(img,(float)angle,i);
-                    rec2.Stop();
+                img = WriteToFile2(img, (float)angle, i);
+                PaintReactangel(img, (float)angle);
+                rec2.Stop();
                     File.AppendAllText(fpath2, "Время обработки: " + (rec2.ElapsedMilliseconds / 1000) + " сек" + Environment.NewLine);
                     File.AppendAllText(fpath2, "---------------------------------------------------------" + Environment.NewLine);
                     rec2.Reset();
@@ -121,14 +133,15 @@ namespace Magistr
                     matr3.GetRes();
                     res3 = matr3.cResult;
                     angle = matr3.gradus;
-                    WriteToFile3(img,(float)angle,i);
-                    rec3.Stop();
+                img = WriteToFile3(img,(float)angle,i);
+                PaintReactangel(img, (float)angle);
+                rec3.Stop();
                     File.AppendAllText(fpath3, "Время обработки: " + (rec3.ElapsedMilliseconds / 1000) + " сек" + Environment.NewLine);
                     File.AppendAllText(fpath3, "---------------------------------------------------------" + Environment.NewLine);
                     rec3.Reset();
             }
         }
-        private void WriteToFile1(Image img,Single angle,int num)
+        private Image WriteToFile1(Image img,Single angle,int num)
         {
             File.AppendAllText(fpath1, "---------------------------------------------------------" + Environment.NewLine);
             File.AppendAllText(fpath1, "Результат обработки изображения " + count[num].Split('\\').Last() + Environment.NewLine);
@@ -137,10 +150,11 @@ namespace Magistr
             File.AppendAllText(fpath1, "M 2:0 = " + res1[1].ToString() + Environment.NewLine);
             File.AppendAllText(fpath1, "M 0:2 = " + res1[2].ToString() + Environment.NewLine);
             File.AppendAllText(fpath1, "Угол поворота: " + matr1.gradus.ToString() + Environment.NewLine);
-            img = RotateImage1(img, (float)angle);
+            img = RotateImage(img, (float)angle);
             img.Save(sipath + "\\" + count[num].Split('\\').Last());
+            return img;
         }
-        private void WriteToFile2(Image img, Single angle, int num)
+        private Image WriteToFile2(Image img, Single angle, int num)
         {
             File.AppendAllText(fpath2, "---------------------------------------------------------" + Environment.NewLine);
             File.AppendAllText(fpath2, "Результат обработки изображения " + count[num].Split('\\').Last() + Environment.NewLine);
@@ -149,10 +163,11 @@ namespace Magistr
             File.AppendAllText(fpath2, "M 2:0 = " + res2[1].ToString() + Environment.NewLine);
             File.AppendAllText(fpath2, "M 0:2 = " + res2[2].ToString() + Environment.NewLine);
             File.AppendAllText(fpath2, "Угол поворота: " + matr2.gradus.ToString() + Environment.NewLine);
-            img = RotateImage2(img, (float)angle);
+            img = RotateImage(img, (float)angle);
             img.Save(sipath + "\\" + count[num].Split('\\').Last());
+            return img;
         }
-        private void WriteToFile3(Image img, Single angle, int num)
+        private Image WriteToFile3(Image img, Single angle, int num)
         {
             File.AppendAllText(fpath3, "---------------------------------------------------------" + Environment.NewLine);
             File.AppendAllText(fpath3, "Результат обработки изображения " + count[num].Split('\\').Last() + Environment.NewLine);
@@ -161,49 +176,25 @@ namespace Magistr
             File.AppendAllText(fpath3, "M 2:0 = " + res3[1].ToString() + Environment.NewLine);
             File.AppendAllText(fpath3, "M 0:2 = " + res3[2].ToString() + Environment.NewLine);
             File.AppendAllText(fpath3, "Угол поворота: " + matr3.gradus.ToString() + Environment.NewLine);
-            img = RotateImage3(img, (float)angle);
+            img = RotateImage(img, (float)angle);
             img.Save(sipath + "\\" + count[num].Split('\\').Last());
+            return img;
         }
-        protected static Image RotateImage1(Image pImage, Single pAngle)
+        protected static Image RotateImage(Image pImage, Single pAngle)
         {
+            
             Matrix lMatrix = new Matrix();
             lMatrix.RotateAt(pAngle, new PointF(pImage.Width / 2, pImage.Height / 2));
             Bitmap lNewBitmap = new Bitmap(pImage.Width, pImage.Height);
             lNewBitmap.SetResolution(pImage.HorizontalResolution, pImage.VerticalResolution);
             Graphics lGraphics = Graphics.FromImage(lNewBitmap);
+            lGraphics.Clear(Color.White);
             lGraphics.Transform = lMatrix;
             lGraphics.DrawImage(pImage, 0, 0);
-            lGraphics.Dispose();
+                lGraphics.Dispose();
             lMatrix.Dispose();
             return lNewBitmap;
         }
-        protected static Image RotateImage2(Image pImage, Single pAngle)
-        {
-            Matrix lMatrix = new Matrix();
-            lMatrix.RotateAt(pAngle, new PointF(pImage.Width / 2, pImage.Height / 2));
-            Bitmap lNewBitmap = new Bitmap(pImage.Width, pImage.Height);
-            lNewBitmap.SetResolution(pImage.HorizontalResolution, pImage.VerticalResolution);
-            Graphics lGraphics = Graphics.FromImage(lNewBitmap);
-            lGraphics.Transform = lMatrix;
-            lGraphics.DrawImage(pImage, 0, 0);
-            lGraphics.Dispose();
-            lMatrix.Dispose();
-            return lNewBitmap;
-        }
-        protected static Image RotateImage3(Image pImage, Single pAngle)
-        {
-            Matrix lMatrix = new Matrix();
-            lMatrix.RotateAt(pAngle, new PointF(pImage.Width / 2, pImage.Height / 2));
-            Bitmap lNewBitmap = new Bitmap(pImage.Width, pImage.Height);
-            lNewBitmap.SetResolution(pImage.HorizontalResolution, pImage.VerticalResolution);
-            Graphics lGraphics = Graphics.FromImage(lNewBitmap);
-            lGraphics.Transform = lMatrix;
-            lGraphics.DrawImage(pImage, 0, 0);
-            lGraphics.Dispose();
-            lMatrix.Dispose();
-            return lNewBitmap;
-        }
-
         private void button2_Click(object sender, EventArgs e)
         {
             if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
@@ -236,12 +227,45 @@ namespace Magistr
                 label6.Text = folderBrowserDialog1.SelectedPath;
                 sipath = folderBrowserDialog1.SelectedPath;
                 fpath = folderBrowserDialog1.SelectedPath + "\\result.txt";
+                if(thcol1!=0)
                 fpath1 = folderBrowserDialog1.SelectedPath + "\\result1.txt";
-                fpath2 = folderBrowserDialog1.SelectedPath + "\\result2.txt";
-                fpath3 = folderBrowserDialog1.SelectedPath + "\\result3.txt";
+                if (thcol2 != 0)
+                    fpath2 = folderBrowserDialog1.SelectedPath + "\\result2.txt";
+                if (thcol3 != 0)
+                    fpath3 = folderBrowserDialog1.SelectedPath + "\\result3.txt";
             }
             button3.Enabled = false;
             button1.Enabled = true;
+        }
+        private void PaintReactangel(Image img, Single angle)
+        {
+            int minX, minY;
+            int maxX, maxY;
+            minX = minY = int.MaxValue;
+            maxX = maxY = int.MinValue;
+            Bitmap ig = new Bitmap(img);
+            for (int x = 0; x < ig.Height; x++)
+            {
+                for (int y = 0; y < ig.Width; y++)
+                {
+                    if (ig.GetPixel(x, y).R != 255)
+                    {
+                        if (x > maxX) maxX = x;
+                        if (x < minX) minX = x;
+                        if (y > maxY) maxY = y;
+                        if (y < minY) minY = y;
+                    }
+                }
+            }
+            using (Graphics g = Graphics.FromImage(img))
+            {
+                Pen red = new Pen(Color.Red,2);
+                g.DrawRectangle(red, minX,minY,maxX-minX,maxY-minY);
+            }
+            img.Save("c:\\r\\test.png");
+            angle *= -1;
+            img = RotateImage(img, (float)angle);
+            img.Save("c:\\r\\test1.png");
         }
     }
 }

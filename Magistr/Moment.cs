@@ -14,7 +14,7 @@ namespace Magistr
         public double[] cResult = new double[3];
         public double[] center;
         public double gradus;
-        private double[,] matrix;
+        public double[,] matrix;
         public Moment(Bitmap img)
         {
             this.matrix1 = img;
@@ -125,7 +125,7 @@ namespace Magistr
             {
                 for (int y = 0; y < matrix1.Width; y++)
                 {
-                    matrix[x, y] = 0.3 * matrix1.GetPixel(x, y).R + 0.59 * matrix1.GetPixel(x, y).G + 0.11 * matrix1.GetPixel(x, y).B;
+                    matrix[x, y] = matrix1.GetPixel(x, y).R;
                     if (matrix[x, y] != 255)
                         h += 1 * 1 * matrix[x, y];
                 }
