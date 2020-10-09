@@ -7,23 +7,18 @@ namespace Magistr
     class Box
     {
         private Point[] points = new Point[4];
-        private string[] angels = new string[4];
-        enum angelname{LeftTop,LeftBottom,RightTop,RightBottom};
-        public Box(Image img,Point lefttop, Point leftbottom, Point righttop, Point rightbottom)
+        public Box(Image img,Point lefttop, Point leftbottom, Point righttop, Point rightbottom,string[] count)
         {
             this.img = img;
             this.lefttop = lefttop;
             this.leftbottom = leftbottom;
             this.righttop = righttop;
             this.rightbottom = rightbottom;
+            this.count = count;
             points[0]= lefttop;
             points[1] = leftbottom;
             points[2] = righttop;
             points[3] = rightbottom;
-            angels[0] = angelname.LeftTop.ToString();
-            angels[1] = angelname.LeftBottom.ToString();
-            angels[2] = angelname.RightTop.ToString();
-            angels[3] = angelname.RightBottom.ToString();
         }
         
         public void RotatePoint(int x0,int y0,Single angle)
@@ -55,10 +50,11 @@ namespace Magistr
         {
             img.Save("c:\\r\\test.png");
         }
-        private Point lefttop { get; set; }
-        private Point leftbottom { get; set; }
-        private Point righttop { get; set; }
-        private Point rightbottom { get; set; }
-        private Image img { get; set; }
+        private Point lefttop;
+        private Point leftbottom;
+        private Point righttop;
+        private Point rightbottom;
+        private Image img;
+        private string[] count;
     }
 }

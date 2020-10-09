@@ -207,7 +207,7 @@ namespace Magistr
                 }
             }
             Point lefttop=new Point(minX,minY), leftbottom=new Point(maxX,minY), righttop=new Point(minX,maxY), rightbottom=new Point(maxX,maxY);
-            Box rect = new Box(img,lefttop, leftbottom, righttop, rightbottom);
+            Box rect = new Box(img,lefttop, leftbottom, righttop, rightbottom,count);
             rect.RotatePoint((int) center[0], (int) center[1], angle);
         }
     }
