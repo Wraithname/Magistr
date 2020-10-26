@@ -27,7 +27,6 @@ namespace Magistr
         {
             double x = 0;
             double y = 0;
-            double sp;
             for (int i = 0; i < matrix1.Height; i++)
             {
                 for (int j = 0; j < matrix1.Width; j++)
