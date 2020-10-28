@@ -30,8 +30,9 @@ namespace Magistr
             localPoint=rect.CalculateLocalePoint(checkPoint, (float)angle);
             double[] wh = rect.PercentPoint();
             resultes.Text += "Локальные координаты: " + localPoint.X + " : " + localPoint.Y + Environment.NewLine;
+            resultes.Text += "Параметры объектной координатной плоскости: Длина=" + Math.Round(wh[0],MidpointRounding.AwayFromZero) + " Ширина= " + Math.Round(wh[1],MidpointRounding.AwayFromZero) + Environment.NewLine;
             resultes.Text += "Относительные координаты: " + localPoint.X +"/"+Math.Round(wh[0],MidpointRounding.AwayFromZero)+ " : " + localPoint.Y +"/"+Math.Round(wh[1],MidpointRounding.AwayFromZero)+ Environment.NewLine;
-            resultes.Text += "Процентное соотношение: X:" + (localPoint.X/wh[0])*100 + " Y: " + (localPoint.Y/wh[1])*100 + Environment.NewLine;
+            resultes.Text += "Коэффициенты отношения: X:" + (localPoint.X/ Math.Round(wh[0], MidpointRounding.AwayFromZero)) + " Y: " + (localPoint.Y/ Math.Round(wh[1], MidpointRounding.AwayFromZero)) + Environment.NewLine;
         }
         public void CalculationStart()
         {
