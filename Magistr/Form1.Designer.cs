@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.calculation = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
@@ -49,16 +49,16 @@
             this.pictureBox1.TabStop = false;
             this.pictureBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseClick);
             // 
-            // button1
+            // calculation
             // 
-            this.button1.Enabled = false;
-            this.button1.Location = new System.Drawing.Point(546, 420);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 36);
-            this.button1.TabIndex = 6;
-            this.button1.Text = "Расчитать";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.calculation.Enabled = false;
+            this.calculation.Location = new System.Drawing.Point(546, 420);
+            this.calculation.Name = "calculation";
+            this.calculation.Size = new System.Drawing.Size(75, 36);
+            this.calculation.TabIndex = 6;
+            this.calculation.Text = "Расчитать";
+            this.calculation.UseVisualStyleBackColor = true;
+            this.calculation.Click += new System.EventHandler(this.button1_Click);
             // 
             // pictureBox2
             // 
@@ -108,7 +108,7 @@
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.pictureBox2);
             this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.calculation);
             this.Name = "Form1";
             this.Text = "Вычисление моментов";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -118,7 +118,7 @@
         }
 
         #endregion
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button calculation;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.PictureBox pictureBox2;

@@ -15,14 +15,25 @@ namespace Magistr
         RichTextBox resultes;
         PictureBox picture1;
         PictureBox picture2;
+        public Point checkPoint;
+        public Point localPoint;
+        Point lefttop;
+        Box rect;
         public Engine(RichTextBox rtb, PictureBox img, PictureBox img2)
         {
             this.resultes = rtb;
             this.picture1 = img;
             this.picture2 = img2;
         }
-
-        public void Start()
+        public void CalculationLocalPointStart()
+        {
+            localPoint=rect.CalculateLocalePoint(checkPoint, (float)angle);
+            double[] wh = rect.PercentPoint();
+            resultes.Text += "Локальные координаты: " + localPoint.X + " : " + localPoint.Y + Environment.NewLine;
+            resultes.Text += "Относительные координаты: " + localPoint.X +"/"+Math.Round(wh[0],MidpointRounding.AwayFromZero)+ " : " + localPoint.Y +"/"+Math.Round(wh[1],MidpointRounding.AwayFromZero)+ Environment.NewLine;
+            resultes.Text += "Процентное соотношение: X:" + (localPoint.X/wh[0])*100 + " Y: " + (localPoint.Y/wh[1])*100 + Environment.NewLine;
+        }
+        public void CalculationStart()
         {
             Schet1();
         }
@@ -85,9 +96,10 @@ namespace Magistr
                     }
                 }
             }
-            Point lefttop = new Point(minX, minY), leftbottom = new Point(maxX, minY), righttop = new Point(minX, maxY), rightbottom = new Point(maxX, maxY);
+            Point leftbottom = new Point(minX, maxY), righttop = new Point(maxX, minY), rightbottom = new Point(maxX, maxY);
+            lefttop = new Point(minX, minY);
             Point ct=new Point(Convert.ToInt32(center[0]), Convert.ToInt32(center[1]));
-            Box rect = new Box(img, lefttop, leftbottom, righttop, rightbottom,ct);
+            rect = new Box(img, lefttop, leftbottom, righttop, rightbottom,ct);
             rect.RotatePoint(angle,picture1);
             //picture1.Image=rect.img;
         }
