@@ -14,40 +14,43 @@ namespace Magistr
         private Point leftbottom;
         private Point righttop;
         private Point rightbottom;
+        private Point lefttopLocal;
+        private Point leftbottomLocal;
+        private Point righttopLocal;
+        private Point rightbottomLocal;
         private Point lefttopNotRotate;
-        private Point leftbottomNotRotate;
-        private Point righttopNotRotate;
-        private Point rightbottomNotRotate;
         public Image img;
-        Bitmap lNewBitmap;
+        double[] percent = new double[2];
         public Box(Image img,Point lefttop, Point leftbottom, Point righttop, Point rightbottom,Point ct)
         {
             this.img = img;
             this.center = ct;
-            this.lNewBitmap= new Bitmap(img);
-            this.leftbottomNotRotate = leftbottom;
             this.lefttopNotRotate = lefttop;
-            this.rightbottomNotRotate = rightbottom;
-            this.righttopNotRotate = righttop;
             points[0]= lefttop;
             points[1] = leftbottom;
             points[2] = righttop;
             points[3] = rightbottom;
         }
+        public Point CalculateGlobalPointForImage(Point localePoint,Single angle)
+        {
+            Point globalPoint;
+            double unangle = (-Math.PI * angle) / 180.0;
+            Point loc = new Point(localePoint.X + lefttopNotRotate.X, localePoint.Y + lefttopNotRotate.Y);
+            globalPoint = new Point((int)((loc.X - center.X) * Math.Cos(unangle) - (loc.Y - center.Y) * Math.Sin(unangle) + center.X),
+                    (int)((loc.X - center.X) * Math.Sin(unangle) + (loc.Y - center.Y) * Math.Cos(unangle) + center.Y));
+            return globalPoint;
+        }
         public Point CalculateLocalePoint(Point checkedPoint,Single angle)
         {
-            Point localePoint,checkPointRotate,localePointRotated;
-            checkPointRotate = new Point((int)((checkedPoint.X - center.X) * Math.Cos(angle) + (checkedPoint.Y - center.Y) * Math.Sin(angle) + center.X),
-                    (int)((checkedPoint.X - center.X) * Math.Sin(angle) - (checkedPoint.Y - center.Y) * Math.Cos(angle) + center.Y));
-            localePointRotated = new Point(checkPointRotate.X-lefttopNotRotate.X,checkPointRotate.Y-lefttopNotRotate.Y);
-            double unangle = -angle;
-            localePoint = new Point((int)((localePointRotated.X - center.X) * Math.Cos(unangle) - (localePointRotated.Y - center.Y) * Math.Sin(unangle) + center.X),
-                    (int)((localePointRotated.X - center.X) * Math.Sin(unangle) + (localePointRotated.Y - center.Y) * Math.Cos(unangle) + center.Y));
+            Point localePoint;
+            double unangle = (Math.PI * angle) / 180.0;
+            Point loc= new Point((int)((checkedPoint.X - center.X) * Math.Cos(unangle) - (checkedPoint.Y - center.Y) * Math.Sin(unangle) + center.X),
+                    (int)((checkedPoint.X - center.X) * Math.Sin(unangle) + (checkedPoint.Y - center.Y) * Math.Cos(unangle) + center.Y));
+            localePoint = new Point(loc.X - lefttopNotRotate.X, loc.Y - lefttopNotRotate.Y);
             return localePoint;
         }
         public double[] PercentPoint()
         {
-            double[] percent = new double[2];
             double w=Math.Sqrt((lefttop.X - righttop.X) * (lefttop.X - righttop.X) + (lefttop.Y - righttop.Y) * (lefttop.Y - righttop.Y));
             double h= Math.Sqrt((leftbottom.X - lefttop.X) * (leftbottom.X - lefttop.X) + (leftbottom.Y - lefttop.Y) * (leftbottom.Y - lefttop.Y));
             percent[0] = w;
@@ -72,7 +75,7 @@ namespace Magistr
                 X = righttop.X-lefttop.X,
                 Y = righttop.Y -lefttop.Y
             };
-            float offset = 25;
+            float offset = 30;
             Point p3 = TranslatePoint(righttop, offset, v);
             PointF v1 = new Point()
             {
@@ -85,8 +88,8 @@ namespace Magistr
                 Pen red = new Pen(Color.Red, 2f);
                 Pen blue = new Pen(Color.Blue, 2f);
                 //Расчёт стрелок
-                double x = p4.X - lefttop.X;
-                double y = p4.Y - lefttop.Y;
+                double x = p4.X - leftbottom.X;
+                double y = p4.Y - leftbottom.Y;
                 double d = Math.Sqrt(Math.Pow(p4.X - leftbottom.X, 2) + Math.Pow(p4.Y - leftbottom.Y, 2));
                 double X4 = p4.X - (x / d)*7;
                 double Y4 = p4.Y - (y / d)*7;

@@ -9,6 +9,7 @@ namespace Magistr
     class Engine
     {
         Moment matr1;
+        Moment matr2;
         double[] res1;
         double angle;
         double[] center;
@@ -17,6 +18,7 @@ namespace Magistr
         PictureBox picture2;
         public Point checkPoint;
         public Point localPoint;
+        private Point calculatedGlobalPoint;
         Point lefttop;
         Box rect;
         public Engine(RichTextBox rtb, PictureBox img, PictureBox img2)
@@ -27,12 +29,32 @@ namespace Magistr
         }
         public void CalculationLocalPointStart()
         {
-            localPoint=rect.CalculateLocalePoint(checkPoint, (float)angle);
             double[] wh = rect.PercentPoint();
+            localPoint =rect.CalculateLocalePoint(checkPoint, (float)angle);
             resultes.Text += "Локальные координаты: " + localPoint.X + " : " + localPoint.Y + Environment.NewLine;
             resultes.Text += "Параметры объектной координатной плоскости: Длина=" + Math.Round(wh[0],MidpointRounding.AwayFromZero) + " Ширина= " + Math.Round(wh[1],MidpointRounding.AwayFromZero) + Environment.NewLine;
             resultes.Text += "Относительные координаты: " + localPoint.X +"/"+Math.Round(wh[0],MidpointRounding.AwayFromZero)+ " : " + localPoint.Y +"/"+Math.Round(wh[1],MidpointRounding.AwayFromZero)+ Environment.NewLine;
             resultes.Text += "Коэффициенты отношения: X:" + (localPoint.X/ Math.Round(wh[0], MidpointRounding.AwayFromZero)) + " Y: " + (localPoint.Y/ Math.Round(wh[1], MidpointRounding.AwayFromZero)) + Environment.NewLine;
+        }
+        public void CalculationGlobalPointStart()
+        {
+            calculatedGlobalPoint = rect.CalculateGlobalPointForImage(localPoint, (float)angle);
+            Point i1, i2, i3, i4;
+            i1 = new Point(calculatedGlobalPoint.X + 10, calculatedGlobalPoint.Y);
+            i2 = new Point(calculatedGlobalPoint.X - 10, calculatedGlobalPoint.Y);
+            i3 = new Point(calculatedGlobalPoint.X, calculatedGlobalPoint.Y + 10);
+            i4 = new Point(calculatedGlobalPoint.X, calculatedGlobalPoint.Y - 10);
+            Image itg = picture2.Image;
+            using (Graphics g = Graphics.FromImage(itg))
+            {
+                g.DrawLine(new Pen(Color.Red, 3), i2, i1);
+                g.DrawLine(new Pen(Color.Red, 3), i3, i4);
+            }
+            picture2.Image = itg;
+        }
+        public void CalculationSecStart()
+        {
+            Schet2();
         }
         public void CalculationStart()
         {
@@ -48,7 +70,19 @@ namespace Magistr
             res1 = matr1.cResult;
             angle = matr1.gradus;
             img = WriteToShow(img, (float)angle);
-            GetReactangel(img, (float)angle);
+            GetReactangel(img, (float)angle,true);
+        }
+        private void Schet2()
+        {
+            Image img = picture2.Image;
+            Bitmap image1 = new Bitmap(picture2.Image);
+            matr1 = new Moment(image1);
+            matr1.GetRes();
+            center = matr1.center;
+            res1 = matr1.cResult;
+            angle = matr1.gradus;
+            img = RotateImage(img, (float)angle, matr1.center);
+            GetReactangel(img, (float)angle,false);
         }
 
         private Image WriteToShow(Image img, float angle)
@@ -77,7 +111,7 @@ namespace Magistr
             lMatrix.Dispose();
             return lNewBitmap;
         }
-        private void GetReactangel(Image img, Single angle)
+        private void GetReactangel(Image img, Single angle,bool flag)
         {
             int minX, minY;
             int maxX, maxY;
@@ -101,7 +135,9 @@ namespace Magistr
             lefttop = new Point(minX, minY);
             Point ct=new Point(Convert.ToInt32(center[0]), Convert.ToInt32(center[1]));
             rect = new Box(img, lefttop, leftbottom, righttop, rightbottom,ct);
+            if(flag)
             rect.RotatePoint(angle,picture1);
+            else rect.RotatePoint(angle, picture2);
             //picture1.Image=rect.img;
         }
     }

@@ -34,6 +34,7 @@ namespace Magistr
                     runtet.CalculationStart();
                 }
             }
+            pictureBox2.Image = null;
             calculation.Enabled = true;
             doClick = true;
         }
@@ -46,6 +47,8 @@ namespace Magistr
                 if (open.ShowDialog() == DialogResult.OK)
                 { 
                     pictureBox2.Image = new Bitmap(open.FileName);
+                    runtet.CalculationSecStart();
+                    runtet.CalculationGlobalPointStart();
                 }
             }
         }
