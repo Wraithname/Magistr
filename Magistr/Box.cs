@@ -14,10 +14,6 @@ namespace Magistr
         private Point leftbottom;
         private Point righttop;
         private Point rightbottom;
-        private Point lefttopLocal;
-        private Point leftbottomLocal;
-        private Point righttopLocal;
-        private Point rightbottomLocal;
         private Point lefttopNotRotate;
         public Image img;
         double[] percent = new double[2];
@@ -30,6 +26,14 @@ namespace Magistr
             points[1] = leftbottom;
             points[2] = righttop;
             points[3] = rightbottom;
+        }
+        public Point CalculatePointForImageByWH(Point localePoint,double[] wh,double[] kof,Single angle)
+        {
+            Point global = new Point(Convert.ToInt32(Math.Round(wh[0] * kof[0]+ lefttopNotRotate.X,MidpointRounding.AwayFromZero)), Convert.ToInt32(Math.Round(wh[1] * kof[1]+ lefttopNotRotate.Y,MidpointRounding.AwayFromZero)));
+            double unangle = (-Math.PI * angle) / 180.0;
+            Point globalun = new Point((int)((global.X - center.X) * Math.Cos(unangle) - (global.Y - center.Y) * Math.Sin(unangle) + center.X),
+                    (int)((global.X - center.X) * Math.Sin(unangle) + (global.Y - center.Y) * Math.Cos(unangle) + center.Y));
+            return globalun;
         }
         public Point CalculateGlobalPointForImage(Point localePoint,Single angle)
         {
@@ -51,7 +55,7 @@ namespace Magistr
         }
         public double[] PercentPoint()
         {
-            double w=Math.Sqrt((lefttop.X - righttop.X) * (lefttop.X - righttop.X) + (lefttop.Y - righttop.Y) * (lefttop.Y - righttop.Y));
+            double w=Math.Sqrt((righttop.X - lefttop.X) * (righttop.X - lefttop.X) + (righttop.Y-lefttop.Y) * (righttop.Y - lefttop.Y));
             double h= Math.Sqrt((leftbottom.X - lefttop.X) * (leftbottom.X - lefttop.X) + (leftbottom.Y - lefttop.Y) * (leftbottom.Y - lefttop.Y));
             percent[0] = w;
             percent[1] = h;
