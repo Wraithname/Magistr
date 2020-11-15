@@ -18,6 +18,7 @@ namespace Magistr
         public Point checkPoint;
         public Point localPoint;
         private Point calculatedGlobalPointbyWh;
+        private Point calculatedGlobalPoint;
         Point lefttop;
         Box rect;
         double[] wh1;
@@ -42,6 +43,7 @@ namespace Magistr
         public void CalculationGlobalPointStart()
         {
             double[] wh = rect.PercentPoint();
+            /*
             calculatedGlobalPointbyWh = rect.CalculatePointForImageByWH(localPoint, wh, widthHeight, (float)angle);
             resultes.Text += "Найденные глобальные координаты через коэффициенты: " + calculatedGlobalPointbyWh.X + " : " + calculatedGlobalPointbyWh.Y + Environment.NewLine;
             Point i1, i2, i3, i4;
@@ -56,14 +58,14 @@ namespace Magistr
                 g.DrawLine(new Pen(Color.Red, 3), i3, i4);
             }
             picture2.Image = itg;
-            /*
+            */
             calculatedGlobalPoint = rect.CalculateGlobalPointForImage(localPoint, (float)angle);
             resultes.Text += "Найденные глобальные координаты: " + calculatedGlobalPoint.X + " : " + calculatedGlobalPoint.Y + Environment.NewLine;
             Point i1, i2, i3, i4;
-            i1 = new Point(calculatedGlobalPoint.X + 10, calculatedGlobalPoint.Y);
-            i2 = new Point(calculatedGlobalPoint.X - 10, calculatedGlobalPoint.Y);
-            i3 = new Point(calculatedGlobalPoint.X, calculatedGlobalPoint.Y + 10);
-            i4 = new Point(calculatedGlobalPoint.X, calculatedGlobalPoint.Y - 10);
+            i1 = new Point(calculatedGlobalPoint.X + 2, calculatedGlobalPoint.Y);
+            i2 = new Point(calculatedGlobalPoint.X - 2, calculatedGlobalPoint.Y);
+            i3 = new Point(calculatedGlobalPoint.X, calculatedGlobalPoint.Y + 2);
+            i4 = new Point(calculatedGlobalPoint.X, calculatedGlobalPoint.Y - 2);
             Image itg = picture2.Image;
             using (Graphics g = Graphics.FromImage(itg))
             {
@@ -71,7 +73,6 @@ namespace Magistr
                 g.DrawLine(new Pen(Color.Red, 3), i3, i4);
             }
             picture2.Image = itg;
-            */
         }
         public void CalculationSecStart()
         {
@@ -130,6 +131,37 @@ namespace Magistr
             lGraphics.DrawImage(pImage, 0, 0);
             lGraphics.Dispose();
             lMatrix.Dispose();
+
+            int squere1 = 0,squere2=0;
+            for(int i=0;i<(int)center[0];i++)
+            {
+                for(int j=0;j<lNewBitmap.Height;j++)
+                {
+                    if (lNewBitmap.GetPixel(i, j).R != 0)
+                        squere1 += 1;
+                }    
+            }
+            for (int i = (int)center[0]; i < lNewBitmap.Width; i++)
+            {
+                for (int j = 0; j < lNewBitmap.Height; j++)
+                {
+                    if (lNewBitmap.GetPixel(i, j).R != 0)
+                        squere2 += 1;
+                }
+            }
+            if (squere1 > squere2)
+            {
+                angle += 180;
+                lMatrix.RotateAt((float)angle, new Point((int)center[0], (int)center[1]));
+                lNewBitmap = new Bitmap(pImage.Width, pImage.Height);
+                lNewBitmap.SetResolution(pImage.HorizontalResolution, pImage.VerticalResolution);
+                lGraphics = Graphics.FromImage(lNewBitmap);
+                lGraphics.Clear(Color.White);
+                lGraphics.Transform = lMatrix;
+                lGraphics.DrawImage(pImage, 0, 0);
+                lGraphics.Dispose();
+                lMatrix.Dispose();
+            }
             return lNewBitmap;
         }
         private void GetReactangel(Image img, Single angle,bool flag)
