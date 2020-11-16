@@ -35,8 +35,10 @@
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.OpenImg = new System.Windows.Forms.Button();
             this.OpenImg2 = new System.Windows.Forms.Button();
+            this.pictureBox3 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             this.SuspendLayout();
             // 
             // pictureBox1
@@ -52,7 +54,7 @@
             // calculation
             // 
             this.calculation.Enabled = false;
-            this.calculation.Location = new System.Drawing.Point(546, 420);
+            this.calculation.Location = new System.Drawing.Point(539, 234);
             this.calculation.Name = "calculation";
             this.calculation.Size = new System.Drawing.Size(75, 36);
             this.calculation.TabIndex = 6;
@@ -68,13 +70,14 @@
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox2.TabIndex = 7;
             this.pictureBox2.TabStop = false;
+            this.pictureBox2.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox2_MouseMove);
             // 
             // richTextBox1
             // 
             this.richTextBox1.Location = new System.Drawing.Point(418, 13);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(316, 401);
+            this.richTextBox1.Size = new System.Drawing.Size(316, 215);
             this.richTextBox1.TabIndex = 8;
             this.richTextBox1.Text = "";
             // 
@@ -99,11 +102,20 @@
             this.OpenImg2.UseVisualStyleBackColor = true;
             this.OpenImg2.Click += new System.EventHandler(this.OpenImg2_Click);
             // 
+            // pictureBox3
+            // 
+            this.pictureBox3.Location = new System.Drawing.Point(418, 283);
+            this.pictureBox3.Name = "pictureBox3";
+            this.pictureBox3.Size = new System.Drawing.Size(316, 217);
+            this.pictureBox3.TabIndex = 11;
+            this.pictureBox3.TabStop = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1151, 548);
+            this.ClientSize = new System.Drawing.Size(1151, 562);
+            this.Controls.Add(this.pictureBox3);
             this.Controls.Add(this.OpenImg2);
             this.Controls.Add(this.OpenImg);
             this.Controls.Add(this.richTextBox1);
@@ -114,6 +126,7 @@
             this.Text = "Вычисление моментов";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -126,6 +139,7 @@
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.Button OpenImg;
         private System.Windows.Forms.Button OpenImg2;
+        private System.Windows.Forms.PictureBox pictureBox3;
     }
 }
 

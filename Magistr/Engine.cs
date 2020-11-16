@@ -62,10 +62,10 @@ namespace Magistr
             calculatedGlobalPoint = rect.CalculateGlobalPointForImage(localPoint, (float)angle);
             resultes.Text += "Найденные глобальные координаты: " + calculatedGlobalPoint.X + " : " + calculatedGlobalPoint.Y + Environment.NewLine;
             Point i1, i2, i3, i4;
-            i1 = new Point(calculatedGlobalPoint.X + 2, calculatedGlobalPoint.Y);
-            i2 = new Point(calculatedGlobalPoint.X - 2, calculatedGlobalPoint.Y);
-            i3 = new Point(calculatedGlobalPoint.X, calculatedGlobalPoint.Y + 2);
-            i4 = new Point(calculatedGlobalPoint.X, calculatedGlobalPoint.Y - 2);
+            i1 = new Point(calculatedGlobalPoint.X + 10, calculatedGlobalPoint.Y);
+            i2 = new Point(calculatedGlobalPoint.X - 10, calculatedGlobalPoint.Y);
+            i3 = new Point(calculatedGlobalPoint.X, calculatedGlobalPoint.Y + 10);
+            i4 = new Point(calculatedGlobalPoint.X, calculatedGlobalPoint.Y - 10);
             Image itg = picture2.Image;
             using (Graphics g = Graphics.FromImage(itg))
             {
@@ -131,7 +131,7 @@ namespace Magistr
             lGraphics.DrawImage(pImage, 0, 0);
             lGraphics.Dispose();
             lMatrix.Dispose();
-
+            /*
             int squere1 = 0,squere2=0;
             for(int i=0;i<(int)center[0];i++)
             {
@@ -151,8 +151,9 @@ namespace Magistr
             }
             if (squere1 > squere2)
             {
-                angle += 180;
-                lMatrix.RotateAt((float)angle, new Point((int)center[0], (int)center[1]));
+                float uangle = 180;
+                lMatrix = new Matrix();
+                lMatrix.RotateAt(uangle, new Point((int)center[0], (int)center[1]));
                 lNewBitmap = new Bitmap(pImage.Width, pImage.Height);
                 lNewBitmap.SetResolution(pImage.HorizontalResolution, pImage.VerticalResolution);
                 lGraphics = Graphics.FromImage(lNewBitmap);
@@ -162,6 +163,7 @@ namespace Magistr
                 lGraphics.Dispose();
                 lMatrix.Dispose();
             }
+            */
             return lNewBitmap;
         }
         private void GetReactangel(Image img, Single angle,bool flag)

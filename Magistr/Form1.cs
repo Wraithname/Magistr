@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Windows.Forms;
 
 namespace Magistr
@@ -13,8 +15,10 @@ namespace Magistr
         {
             InitializeComponent();
             runtet = new Engine(richTextBox1, pictureBox1, pictureBox2);
+            _BackColor = pictureBox2.BackColor;
+            pictureBox3.SizeMode = PictureBoxSizeMode.Zoom;
         }
-
+        private Color _BackColor;
         private void button1_Click(object sender, EventArgs e)
         {
             runtet.CalculationLocalPointStart();
@@ -77,6 +81,34 @@ namespace Magistr
                 pictureBox1.Image = itg;
                 doClick = false;
             }
+        }
+        private void UpdateZoomedImage(MouseEventArgs e)
+        {
+            int zoomWidth = pictureBox2.Width/2;
+            int zoomHeight = pictureBox2.Height/2;
+            int halfWidth = zoomWidth / 2;
+            int halfHeight = zoomHeight / 2;
+            Bitmap tempBitmap = new Bitmap(zoomWidth, zoomHeight, PixelFormat.Format24bppRgb);
+            Graphics bmGraphics = Graphics.FromImage(tempBitmap);
+            bmGraphics.Clear(_BackColor);
+            bmGraphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            bmGraphics.DrawImage(pictureBox2.Image,
+                                 new Rectangle(0, 0, zoomWidth, zoomHeight),
+                                 new Rectangle(e.X *3 -halfWidth, e.Y *3-halfHeight, zoomWidth, zoomHeight),
+                                 GraphicsUnit.Pixel);
+            pictureBox3.Image = tempBitmap;
+            bmGraphics.DrawLine(Pens.Black, halfWidth + 1, halfHeight - 4, halfWidth + 1, halfHeight - 1);
+            bmGraphics.DrawLine(Pens.Black, halfWidth + 1, halfHeight + 6, halfWidth + 1, halfHeight + 3);
+            bmGraphics.DrawLine(Pens.Black, halfWidth - 4, halfHeight + 1, halfWidth - 1, halfHeight + 1);
+            bmGraphics.DrawLine(Pens.Black, halfWidth + 6, halfHeight + 1, halfWidth + 3, halfHeight + 1);
+            bmGraphics.Dispose();
+            pictureBox3.Refresh();
+        }
+        private void pictureBox2_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (pictureBox2.Image == null)
+                return;
+            UpdateZoomedImage(e);
         }
     }
 }
