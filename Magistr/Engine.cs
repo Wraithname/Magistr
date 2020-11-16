@@ -131,39 +131,41 @@ namespace Magistr
             lGraphics.DrawImage(pImage, 0, 0);
             lGraphics.Dispose();
             lMatrix.Dispose();
-            /*
+
             int squere1 = 0,squere2=0;
-            for(int i=0;i<(int)center[0];i++)
+            for (int j = 0; j < lNewBitmap.Height; j++)     
             {
-                for(int j=0;j<lNewBitmap.Height;j++)
+                for (int i = 0; i < (int)center[0]; i++)
                 {
-                    if (lNewBitmap.GetPixel(i, j).R != 0)
+                    if (lNewBitmap.GetPixel(i, j).R != 255)
                         squere1 += 1;
                 }    
             }
-            for (int i = (int)center[0]; i < lNewBitmap.Width; i++)
+            for (int j = 0; j < lNewBitmap.Height; j++)     
             {
-                for (int j = 0; j < lNewBitmap.Height; j++)
+                for (int i = (int)center[0]; i < lNewBitmap.Width; i++)
                 {
-                    if (lNewBitmap.GetPixel(i, j).R != 0)
+                    if (lNewBitmap.GetPixel(i, j).R != 255)
                         squere2 += 1;
                 }
             }
             if (squere1 > squere2)
             {
+                Matrix lMatrix1 = new Matrix();
+                angle += 180;
                 float uangle = 180;
-                lMatrix = new Matrix();
-                lMatrix.RotateAt(uangle, new Point((int)center[0], (int)center[1]));
-                lNewBitmap = new Bitmap(pImage.Width, pImage.Height);
-                lNewBitmap.SetResolution(pImage.HorizontalResolution, pImage.VerticalResolution);
-                lGraphics = Graphics.FromImage(lNewBitmap);
+                lMatrix1.RotateAt(uangle, new Point((int)center[0], (int)center[1]));
+                Bitmap lNewBitmap1 = new Bitmap(lNewBitmap.Width, lNewBitmap.Height);
+                lNewBitmap1.SetResolution(lNewBitmap.HorizontalResolution, lNewBitmap.VerticalResolution);
+                lGraphics = Graphics.FromImage(lNewBitmap1);
                 lGraphics.Clear(Color.White);
-                lGraphics.Transform = lMatrix;
-                lGraphics.DrawImage(pImage, 0, 0);
+                lGraphics.Transform = lMatrix1;
+                lGraphics.DrawImage(lNewBitmap, 0, 0);
                 lGraphics.Dispose();
-                lMatrix.Dispose();
+                lMatrix1.Dispose();
+                return lNewBitmap1;
             }
-            */
+            else
             return lNewBitmap;
         }
         private void GetReactangel(Image img, Single angle,bool flag)
@@ -193,7 +195,6 @@ namespace Magistr
             if(flag)
             rect.RotatePoint(angle,picture1);
             else rect.RotatePoint(angle, picture2);
-            //picture1.Image=rect.img;
         }
     }
 }

@@ -63,8 +63,8 @@ namespace Magistr
             {
                 //coordinateplace.X = (int)(((double)pictureBox1.Image.Width) / ((double)pictureBox1.Width) * (double)e.X);
                 //coordinateplace.Y = (int)(((double)pictureBox1.Image.Height) / ((double)pictureBox1.Height) * (double)e.Y);
-                coordinateplace.X = 478;
-                coordinateplace.Y = 501;
+                coordinateplace.X = 501;
+                coordinateplace.Y = 478;
                 richTextBox1.Text += "Глобалные координаты точки " + coordinateplace.X + ":" + coordinateplace.Y + Environment.NewLine;
                 runtet.checkPoint = coordinateplace;
                 Point i1, i2, i3, i4;
