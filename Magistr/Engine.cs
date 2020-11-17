@@ -20,6 +20,7 @@ namespace Magistr
         private Point calculatedGlobalPointbyWh;
         private Point calculatedGlobalPoint;
         Point lefttop;
+        Point leftbottom;
         Box rect;
         double[] wh1;
         double[] widthHeight = new double[2];
@@ -32,13 +33,15 @@ namespace Magistr
         public void CalculationLocalPointStart()
         {
             wh1 = rect.PercentPoint();
-            localPoint =rect.CalculateLocalePoint(checkPoint, (float)angle);
+            Point loc0 =rect.CalculateLocalePoint(checkPoint, (float)angle);
+            Point loc = new Point(loc0.X - lefttop.X, (leftbottom.Y - lefttop.Y)-(loc0.Y -lefttop.Y));
+            localPoint = new Point(loc0.X - lefttop.X, loc0.Y - lefttop.Y);
             widthHeight[0] = localPoint.X / wh1[0];
             widthHeight[1] = localPoint.Y / wh1[1];
-            resultes.Text += "Локальные координаты: x^: " + localPoint.X + " y^: " + localPoint.Y + Environment.NewLine;
+            resultes.Text += "Локальные координаты: x^: " + loc.X + " y^: " + loc.Y + Environment.NewLine;
             resultes.Text += "Параметры объектной координатной плоскости: Длина=" + Math.Round(wh1[0],MidpointRounding.AwayFromZero) + " Ширина= " + Math.Round(wh1[1],MidpointRounding.AwayFromZero) + Environment.NewLine;
-            resultes.Text += "Относительные координаты: :" + localPoint.X +"/"+Math.Round(wh1[0],MidpointRounding.AwayFromZero)+ " : " + localPoint.Y +"/"+Math.Round(wh1[1],MidpointRounding.AwayFromZero)+ Environment.NewLine;
-            resultes.Text += "Коэффициенты отношения: K:" + (localPoint.X/ Math.Round(wh1[0], MidpointRounding.AwayFromZero)) + " N: " + (localPoint.Y/ Math.Round(wh1[1], MidpointRounding.AwayFromZero)) + Environment.NewLine;
+            resultes.Text += "Относительные координаты: :" + loc.X +"/"+Math.Round(wh1[0],MidpointRounding.AwayFromZero)+ " : " + loc.Y +"/"+Math.Round(wh1[1],MidpointRounding.AwayFromZero)+ Environment.NewLine;
+            resultes.Text += "Коэффициенты отношения: K:" + (loc.X/ Math.Round(wh1[0], MidpointRounding.AwayFromZero)) + " N: " + (loc.Y/ Math.Round(wh1[1], MidpointRounding.AwayFromZero)) + Environment.NewLine;
         }
         public void CalculationGlobalPointStart()
         {
@@ -189,7 +192,8 @@ namespace Magistr
                     }
                 }
             }
-            Point leftbottom = new Point(minX, maxY), righttop = new Point(maxX, minY), rightbottom = new Point(maxX, maxY);
+            Point righttop = new Point(maxX, minY), rightbottom = new Point(maxX, maxY);
+            leftbottom = new Point(minX, maxY);
             lefttop = new Point(minX, minY);
             Point ct=new Point(Convert.ToInt32(center[0]), Convert.ToInt32(center[1]));
             rect = new Box(img, lefttop, leftbottom, righttop, rightbottom,ct);

@@ -48,9 +48,8 @@ namespace Magistr
         {
             Point localePoint;
             double unangle = (Math.PI * angle) / 180.0;
-            Point loc= new Point((int)((checkedPoint.X - center.X) * Math.Cos(unangle) - (checkedPoint.Y - center.Y) * Math.Sin(unangle) + center.X),
+            localePoint = new Point((int)((checkedPoint.X - center.X) * Math.Cos(unangle) - (checkedPoint.Y - center.Y) * Math.Sin(unangle) + center.X),
                     (int)((checkedPoint.X - center.X) * Math.Sin(unangle) + (checkedPoint.Y - center.Y) * Math.Cos(unangle) + center.Y));
-            localePoint = new Point(loc.X - lefttopNotRotate.X, loc.Y - lefttopNotRotate.Y);
             return localePoint;
         }
         public double[] PercentPoint()
