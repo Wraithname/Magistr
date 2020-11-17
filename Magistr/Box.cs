@@ -76,42 +76,42 @@ namespace Magistr
             rightbottom = points[3];
             PointF v = new Point()
             {
-                X = righttop.X-lefttop.X,
-                Y = righttop.Y -lefttop.Y
+                X = rightbottom.X-leftbottom.X,
+                Y = rightbottom.Y -leftbottom.Y
             };
             float offset = 30;
-            Point p3 = TranslatePoint(righttop, offset, v);
+            Point p3 = TranslatePoint(rightbottom, offset, v);
             PointF v1 = new Point()
             {
-                X = leftbottom.X-lefttop.X,
-                Y = leftbottom.Y- lefttop.Y
+                X = lefttop.X-leftbottom.X,
+                Y = lefttop.Y- leftbottom.Y
             };
-            Point p4 = TranslatePoint(leftbottom, offset, v1);
+            Point p4 = TranslatePoint(lefttop, offset, v1);
             using (Graphics g = Graphics.FromImage(pirt))
             {
                 Pen red = new Pen(Color.Red, 2f);
                 Pen blue = new Pen(Color.Blue, 2f);
                 //Расчёт стрелок
-                double x = p4.X - leftbottom.X;
-                double y = p4.Y - leftbottom.Y;
-                double d = Math.Sqrt(Math.Pow(p4.X - leftbottom.X, 2) + Math.Pow(p4.Y - leftbottom.Y, 2));
+                double x = p4.X - lefttop.X;
+                double y = p4.Y - lefttop.Y;
+                double d = Math.Sqrt(Math.Pow(p4.X - lefttop.X, 2) + Math.Pow(p4.Y - lefttop.Y, 2));
                 double X4 = p4.X - (x / d)*7;
                 double Y4 = p4.Y - (y / d)*7;
-                double Xp = p4.Y - leftbottom.Y;
-                double Yp = leftbottom.X - p4.X;
+                double Xp = p4.Y - lefttop.Y;
+                double Yp = lefttop.X - p4.X;
                 // координаты перпендикуляров, удалённой от точки X4;Y4 на 10px в разные стороны
                 double X5 = X4 + (Xp / d) * 10;
                 double Y5 = Y4 + (Yp / d) * 10;
                 double X6 = X4 - (Xp / d) * 10;
                 double Y6 = Y4 - (Yp / d) * 10;
                 //Расчёт стрелок
-                double x1 = p3.X - righttop.X;
-                double y1 = p3.Y - righttop.Y;
-                double d1 = Math.Sqrt(Math.Pow(p3.X - righttop.X, 2) + Math.Pow(p3.Y - righttop.Y, 2));
+                double x1 = p3.X - rightbottom.X;
+                double y1 = p3.Y - rightbottom.Y;
+                double d1 = Math.Sqrt(Math.Pow(p3.X - rightbottom.X, 2) + Math.Pow(p3.Y - rightbottom.Y, 2));
                 double X41 = p3.X - (x1 / d1) * 10;
                 double Y41 = p3.Y - (y1 / d1) * 10;
-                double Xp1 = p3.Y - righttop.Y;
-                double Yp1 = righttop.X - p3.X;
+                double Xp1 = p3.Y - rightbottom.Y;
+                double Yp1 = rightbottom.X - p3.X;
                 // координаты перпендикуляров, удалённой от точки X4;Y4 на 10px в разные стороны
                 double X51 = X41 + (Xp1 / d) * 10;
                 double Y51 = Y41 + (Yp1 / d) * 10;
@@ -119,9 +119,9 @@ namespace Magistr
                 double Y61 = Y41 - (Yp1 / d) * 10;
                 // построение линий
                 g.DrawLine(red, righttop, rightbottom);
-                g.DrawLine(red, leftbottom, rightbottom);
-                g.DrawLine(blue, lefttop, p4);
-                g.DrawLine(blue, lefttop, p3);
+                g.DrawLine(red, lefttop, righttop);
+                g.DrawLine(blue, leftbottom, p4);
+                g.DrawLine(blue, leftbottom, p3);
                 g.DrawLine(blue, p4, new Point((int)X5, (int)Y5));
                 g.DrawLine(blue, p4, new Point((int)X6, (int)Y6));
                 g.DrawLine(blue, p3, new Point((int)X51, (int)Y51));

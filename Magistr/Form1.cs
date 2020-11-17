@@ -18,6 +18,17 @@ namespace Magistr
             _BackColor = pictureBox2.BackColor;
             pictureBox3.SizeMode = PictureBoxSizeMode.Zoom;
         }
+
+        private void PictureBox2_Paint1(object sender, PaintEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void PictureBox1_Paint1(object sender, PaintEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
         private Color _BackColor;
         private void button1_Click(object sender, EventArgs e)
         {
@@ -56,16 +67,13 @@ namespace Magistr
                 }
             }
         }
-
         private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
         {
             if (doClick)
             {
-                //coordinateplace.X = (int)(((double)pictureBox1.Image.Width) / ((double)pictureBox1.Width) * (double)e.X);
-                //coordinateplace.Y = (int)(((double)pictureBox1.Image.Height) / ((double)pictureBox1.Height) * (double)e.Y);
-                coordinateplace.X = 501;
-                coordinateplace.Y = 478;
-                richTextBox1.Text += "Глобалные координаты точки " + coordinateplace.X + ":" + coordinateplace.Y + Environment.NewLine;
+                coordinateplace.X = (int)(((double)pictureBox1.Image.Width) / ((double)pictureBox1.Width) * (double)e.X);
+                coordinateplace.Y = (int)(((double)pictureBox1.Image.Height) / ((double)pictureBox1.Height) * (double)e.Y);
+                richTextBox1.Text += "Глобалные координаты точки x: "+ coordinateplace.X + " y:" + (pictureBox1.Image.Height-coordinateplace.Y) + Environment.NewLine;
                 runtet.checkPoint = coordinateplace;
                 Point i1, i2, i3, i4;
                 i1 = new Point(coordinateplace.X+10, coordinateplace.Y);

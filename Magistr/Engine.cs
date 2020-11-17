@@ -35,10 +35,10 @@ namespace Magistr
             localPoint =rect.CalculateLocalePoint(checkPoint, (float)angle);
             widthHeight[0] = localPoint.X / wh1[0];
             widthHeight[1] = localPoint.Y / wh1[1];
-            resultes.Text += "Локальные координаты: " + localPoint.X + " : " + localPoint.Y + Environment.NewLine;
+            resultes.Text += "Локальные координаты: x^: " + localPoint.X + " y^: " + localPoint.Y + Environment.NewLine;
             resultes.Text += "Параметры объектной координатной плоскости: Длина=" + Math.Round(wh1[0],MidpointRounding.AwayFromZero) + " Ширина= " + Math.Round(wh1[1],MidpointRounding.AwayFromZero) + Environment.NewLine;
-            resultes.Text += "Относительные координаты: " + localPoint.X +"/"+Math.Round(wh1[0],MidpointRounding.AwayFromZero)+ " : " + localPoint.Y +"/"+Math.Round(wh1[1],MidpointRounding.AwayFromZero)+ Environment.NewLine;
-            resultes.Text += "Коэффициенты отношения: X:" + (localPoint.X/ Math.Round(wh1[0], MidpointRounding.AwayFromZero)) + " Y: " + (localPoint.Y/ Math.Round(wh1[1], MidpointRounding.AwayFromZero)) + Environment.NewLine;
+            resultes.Text += "Относительные координаты: :" + localPoint.X +"/"+Math.Round(wh1[0],MidpointRounding.AwayFromZero)+ " : " + localPoint.Y +"/"+Math.Round(wh1[1],MidpointRounding.AwayFromZero)+ Environment.NewLine;
+            resultes.Text += "Коэффициенты отношения: K:" + (localPoint.X/ Math.Round(wh1[0], MidpointRounding.AwayFromZero)) + " N: " + (localPoint.Y/ Math.Round(wh1[1], MidpointRounding.AwayFromZero)) + Environment.NewLine;
         }
         public void CalculationGlobalPointStart()
         {
@@ -60,7 +60,8 @@ namespace Magistr
             picture2.Image = itg;
             */
             calculatedGlobalPoint = rect.CalculateGlobalPointForImage(localPoint, (float)angle);
-            resultes.Text += "Найденные глобальные координаты: " + calculatedGlobalPoint.X + " : " + calculatedGlobalPoint.Y + Environment.NewLine;
+            resultes.Text += "Параметры объектной координатной плоскости распознаваемого объекта: Длина=" + Math.Round(wh[0], MidpointRounding.AwayFromZero) + " Ширина= " + Math.Round(wh[1], MidpointRounding.AwayFromZero) + Environment.NewLine;
+            resultes.Text += "Найденные глобальные координаты: x:" + calculatedGlobalPoint.X + " y: " + (picture2.Image.Height-calculatedGlobalPoint.Y) + Environment.NewLine;
             Point i1, i2, i3, i4;
             i1 = new Point(calculatedGlobalPoint.X + 10, calculatedGlobalPoint.Y);
             i2 = new Point(calculatedGlobalPoint.X - 10, calculatedGlobalPoint.Y);
